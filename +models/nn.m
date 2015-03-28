@@ -28,7 +28,7 @@ function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
 %
 %   Options:
 %       nn::similarity      (default: 0)
-%       nn::tie break       (default: 'none')
+%       nn::tie break       (default: 'first')
 %       measure arg*        (default: --)
 %       epsilon             (default: 1e-10)
 %
