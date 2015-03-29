@@ -41,9 +41,9 @@ function [traintrain, testtrain] = calcmatrix(train, test, distfun, options)
 %       CALCMATRIX(TRAIN,DIST,OPTS)     % incorrect!
 %
 %   Options:
+%       dists::arg              (default: --)
 %       dists::symmetric        (default: 1)
 %       dists::reflexive        (default: 1)
-%       measure arg             (default: --)
 %
 %   If the "measure arg" option is present, its value is passed as a third
 %   argument to the distance function.
@@ -53,9 +53,9 @@ end
 if ~exist('options', 'var')
     options = opts.empty;
 end
-if opts.has(options, 'measure arg')
+if opts.has(options, 'dists::arg')
     measurehasarg = 1;
-    measurearg = opts.get(options, 'measure arg');
+    measurearg = opts.get(options, 'dists::arg');
 else
     measurehasarg = 0;
     measurearg = [];

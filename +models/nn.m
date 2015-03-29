@@ -27,9 +27,9 @@ function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
 %   test sample.
 %
 %   Options:
-%       nn::similarity      (default: 0)
+%       dists::arg*         (default: --)
+%       dists::similarity   (default: 0)
 %       nn::tie break       (default: 'first')
-%       measure arg*        (default: --)
 %       epsilon             (default: 1e-10)
 %
 %   If the "measure arg" option is present, its value is passed as a third
@@ -54,7 +54,7 @@ else
 end
 
 % Is this a similarity function?
-issimilarity = opts.get(options, 'similarity', 0);
+issimilarity = opts.get(options, 'dists::similarity', 0);
 if issimilarity
     similarityfix = -1;
 else
@@ -62,9 +62,9 @@ else
 end
 
 % Does the measure take some argument?
-if opts.has(options, 'measure arg')
+if opts.has(options, 'dists::arg')
     measuretakesarg = 1;
-    measurearg = opts.get(options, 'measure arg');
+    measurearg = opts.get(options, 'dists::arg');
 else
     measuretakesarg = 0;
 end

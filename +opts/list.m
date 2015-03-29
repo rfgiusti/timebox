@@ -58,16 +58,15 @@ function x = list
 %       sax::segmenting function    Must be a function handle. ?
 %
 %   Options for distance/similarity functions and functionalities:
-%       measure arg         If present, the value of this options will be
+%       dists::arg          If present, the value of this options will be
 %                           supplied as a third argument to a distance
 %                           function
 %       dists::reflexive    Specifies if a distance function is reflexive
+%       dists::similarity   If true, distance function is treated as a
+%                           similarity function
 %       dists::symmetric    Specifies if a distance function is symmetric
 %
 %   Options for classification models:
-%       nn::similarity      If true, the nearest neighbor is the one with
-%                           greatest similarity instead of smallest
-%                           distance
 %       nn::tie break       A char. Valid values are 'first', 'random', and
 %                           'none'. If there are several nearest neighbors
 %                           at the same distance of the needle, this
