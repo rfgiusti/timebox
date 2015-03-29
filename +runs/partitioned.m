@@ -41,8 +41,8 @@ end
 modelfun = opts.get(options, 'runs::model', @models.nn);
 
 numtestinstances = size(test, 1);
-classes = zeros(1, numtestinstances);
-indices = zeros(1, numtestinstances);
+classes = zeros(numtestinstances, 1);
+indices = zeros(numtestinstances, 1);
 
 hits = 0;
 for i = 1:numtestinstances

@@ -48,8 +48,8 @@ end
 classifyhandle = opts.get(options, 'runs::model', @models.nn);
 
 numinstances = size(ds, 1);
-labels = zeros(1, numinstances);
-neighbors = zeros(1, numinstances);
+labels = zeros(numinstances, 1);
+neighbors = zeros(numinstances, 1);
 
 hits = 0;
 for i = 1 : numinstances
