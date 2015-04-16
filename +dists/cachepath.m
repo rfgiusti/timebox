@@ -17,17 +17,17 @@ function path = cachepath(dsname, varargin)
 %   taken from the argument list
 narginchk(1,3);
 if nargin == 1
-    % CACHEPATH(DSNAME)
+    % Called as CACHEPATH(DSNAME)
     distname = 'euclidean';
     timedomain = 1;
 elseif nargin == 2
-    % CACHEPATH(DSNAME,DIST)
+    % Called as CACHEPATH(DSNAME,DIST)
     distname = varargin{1};
     tb.assert(~isempty(distname));
     timedomain = 1;
 elseif nargin == 3
-    % CACHEPATH(DSNAME,[],REPNAME) or
-    % CACHEPATH(DSNAME,DIST,REPNAME)
+    % Called as CACHEPATH(DSNAME,[],REPNAME) or
+    % Called as CACHEPATH(DSNAME,DIST,REPNAME)
     distname = varargin{1};
     if isempty(distname)
         distname = 'euclidean';

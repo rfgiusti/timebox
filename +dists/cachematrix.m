@@ -16,5 +16,6 @@ function cachematrix(traintrain, testtrain, dsname, varargin) %#ok<INUSL>
 %   specified by DIST instead of the Euclidean distance and the decision
 %   space specified by REPNAME instead of the time domain.
 cachepath = dists.cachepath(dsname, varargin{:});
-save(cachepath, 'traintrain', 'testtrain', '-mat');
+fprintf('Would save distance matrix: %s\n', cachepath);
+% save(cachepath, 'traintrain', 'testtrain', '-mat');
 end
