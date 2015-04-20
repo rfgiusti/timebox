@@ -10,6 +10,7 @@ of time series classification methods.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
 even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+
 Installing TimeBox
 ---
 
@@ -43,18 +44,18 @@ and test samples, respectivelly. If your data set does not have labeled data for
 variable should contain an empty array `[]`.
 
 The TS package contains functions for handling data sets. In particular TS.LOAD loads a data set
-from TimeBox repository. Conversely, TS.SAVE saves a data set into TimeBox repository.
+from the TimeBox repository. Conversely, TS.SAVE saves a data set into the TimeBox repository.
 
 As an example, a test data set may be found in `assets/dataset_example`. It contains two files,
-`dataset_example.train` and `dataset_example.test`. To load this small data set and save in TimeBox
-repository with the name `example`, do the following:
+`dataset_example.train` and `dataset_example.test`. To load this small data set and save it in the
+TimeBox repository with the name `example`, you may proceed as follows:
 
 ```Matlab
 chdir('~/timebox');                % assuming TimeBox has been installed here
 train = load('assets/dataset_example.train');
 test = load('assets/dataset_example.test');
-ts.save(train, test, 'example');   % register into repository
+ts.save(train, test, 'example');   % register into the repository
 ```
 
 Once the data set has been saved into TimeBox repository, it should be referred to by its given name
-every time a function needs to access the repository.
+(in this case, `example`) every time a function needs to access the repository.
