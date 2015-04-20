@@ -15,7 +15,7 @@ function path = cachepath(dsname, varargin)
 %
 %   CACHEPATH(DSNAME,DIST,REPNAME) both distance and representation are
 %   taken from the argument list
-narginchk(1,3);
+tb.assert(nargin >= 1 && nargin <= 3, 'Function called with wrong number of arguments (should be 1, 2, or 3)');
 if nargin == 1
     % Called as CACHEPATH(DSNAME)
     distname = 'euclidean';
