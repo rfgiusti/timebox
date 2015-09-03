@@ -1,4 +1,4 @@
-function ensuredir(path)
+function ensuredir(dirpath)
 %TB.ENSUREDIR   Ensure that the specified absolute path is an existent
 %directory. Works only with *NIX file systems starting on / (this may
 %change in the future)
@@ -10,10 +10,10 @@ function ensuredir(path)
 %   files, nothing is done. If any directory is created and an error
 %   happens before the last directory is created, the partially created
 %   path will remain in the file system.
-slashes = strfind(path, '/');
+slashes = strfind(dirpath, '/');
 tb.assert(~isempty(slashes) && slashes(1) == 1, 'Path must be absolute *NIX identifier (begins with /)');
-if ~exist(path, 'file')
-    dirparts = {};
+if ~exist(dirpath, 'file')
+    dirparts = tb.splitstring(dirpath, '/');
     
 end
 end

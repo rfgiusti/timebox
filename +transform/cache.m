@@ -35,7 +35,7 @@ function cache(train, test, dsname, repname, meta) %#ok<INUSL>
 %   If the data has been previously cached, they are replaced with the
 %   new values.
 assert(~isequal(lower(repname), 'time'), 'Can not cache original data as transformed data.');
-path = transform.cachepath(dsname, repname);
+[cachepath, dirpart] = transform.cachepath(dsname, repname);
 
 if exist('meta', 'var')
     if isequal(class(meta), 'struct')
@@ -50,6 +50,6 @@ else
     meta = struct('created', now, 'repname', repname); %#ok<NASGU>
 end
 
-ts.ensuredir(path);
-save(path, 'train', 'test', 'meta', '-mat');
+tb.ensuredir(dirpath);
+save(cachepath, 'train', 'test', 'meta', '-mat');
 end
