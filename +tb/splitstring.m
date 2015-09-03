@@ -2,15 +2,9 @@ function parts = splitstring(string, delimiter)
 %TB.SPLITSTRING     Split a string into various pieces separated by a
 %delimiter.
 %   SPLITSTRING(S,D) returns the components of the string S when D is
-%   used as a delimiter. The components are returned as a column cell of
-%   CHAR.
-%
-%   If the delimiter is longer that the text, SPLITSTRING returns an
-%   empty cell.
-if length(delimiter) > length(string)
-    parts = {};
-    return
-end
+%   used as a single-character delimiter. The components are returned as
+%   a column cell of CHAR.
+tb.assert(length(delimiter) == 1, 'Delimiter should be one single character');
 
 occurences = strfind(string, delimiter);
 if isempty(occurences)
