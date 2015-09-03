@@ -50,5 +50,6 @@ else
     meta = struct('created', now, 'repname', repname); %#ok<NASGU>
 end
 
+ts.ensuredir(path);
 save(path, 'train', 'test', 'meta', '-mat');
 end
