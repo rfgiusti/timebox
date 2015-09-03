@@ -63,4 +63,10 @@ ts.save(train, test, 'example');   % register into the repository
 ```
 
 Once the data set has been saved into TimeBox repository, it should be referred to by its given name
-(in this case, `example`) every time a function needs to access the repository.
+(in this case, `example`) every time a function needs to access the repository. For instance, the
+TS.LOAD function may be used to load the previously data set `example` as follows:
+
+```Matlab
+chdir('~/timebox');                % assuming TimeBox has been installed here
+[train, test] = ts.load('example');
+```
