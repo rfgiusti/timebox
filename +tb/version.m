@@ -2,8 +2,9 @@ function ver = version
 %TB.VERSION     Return the version of TimeBox
 %   Release history:
 %
-%   Before 0.8.3 - undocumented
 %   0.8.3 - currently not released
+%   0.7.2 - May-19-2015
+%   0.6.1 - Apr-27-2015
 ver = struct;
 ver.major = 0;                               % major version; increase with big changes. Currently unreleased
 ver.minor = 8;                               % minor version; increase with new bug fixes "small" new functionalities
