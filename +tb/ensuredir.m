@@ -5,15 +5,24 @@ function ensuredir(dirpath)
 %   ENSUREDIR(S) verifies if the directories in the tree of S exists and
 %   attempts to create each required parent directory so that the final
 %   path is valid. It assumes the path is absolute.
-%
-%   If the path points to a file or if any of the parent directories are
-%   files, nothing is done. If any directory is created and an error
-%   happens before the last directory is created, the partially created
-%   path will remain in the file system.
-slashes = strfind(dirpath, '/');
-tb.assert(~isempty(slashes) && slashes(1) == 1, 'Path must be absolute *NIX identifier (begins with /)');
+tb.assert(~isempty(dirpath) && dirpath(1) ==    '/', 'Path must be absolute *NIX identifier (begins with /)');
 if ~exist(dirpath, 'file')
     dirparts = tb.splitstring(dirpath, '/');
     
+    nextdir = '';
+    for i = 2:numel(dirparts)
+        if ~isequal(dirparts{i}, '/')
+            nextdir = [nextdir '/' dirparts{i}]; %#ok<AGROW>
+            if ~exist(nextdir, 'file')
+                try
+                    mkdir(nextdir);
+                catch e
+                    err = MException('TimeBox:EnsureDir', 'Error creating part %s of path %s: %s\n', nextdir, ...
+                        dirpath, e.message);
+                    throw(err);
+                end;
+            end
+        end
+    end
 end
 end
