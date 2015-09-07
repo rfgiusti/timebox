@@ -50,6 +50,6 @@ else
     meta = struct('created', now, 'repname', repname); %#ok<NASGU>
 end
 
-tb.ensuredir(dirpath);
+tb.ensuredir(dirpart);
 save(cachepath, 'train', 'test', 'meta', '-mat');
 end
