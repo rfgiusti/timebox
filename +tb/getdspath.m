@@ -6,7 +6,7 @@ if exist('~/.timebox.dspath', 'file')
     tb.assert(f ~= -1, 'Can''t open "~/.timebox.dspath" for reading');
     dspath = fscanf(f, '%s');
     fclose(f);
-    tb.assert(~empty(dspath) && dspath(1) == '/', ['Path to repository should be specified in full *NIX format ' ...
+    tb.assert(~isempty(dspath) && dspath(1) == '/', ['Path to repository should be specified in full *NIX format ' ...
         '(starting with /)']);
     tb.assert(exist(dspath, 'dir'), 'Configuration file "~/.timebox.dspath" points to a nonexistent path');
     if dspath(end) ~= '/'
