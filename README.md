@@ -13,14 +13,15 @@ compliance with the License. You may obtain a copy of the License at
        http://www.apache.org/licenses/LICENSE-2.0
 
 This software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-either express or implied.
+either express or implied. 
 
 
 Installing TimeBox
 ---
 
 TimeBox has been tested on Matlab 2013 for GNU/Linux. If you are running a different version of Matlab
-or a different operating system, TimeBox may not work properly without tweaks.
+or a different operating system, TimeBox may not work properly without tweaks. Some things probably
+will **NOT** work under Microsoft Windows (any version).
 
 For installation on GNU/Linux:
 
