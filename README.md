@@ -1,8 +1,4 @@
-# timebox
-Time Series toolbox for Matlab
-
-Purpose
----
+# timebox -- Time Series toolbox for Matlab
 
 TimeBox is a procedural library that implements data structures and functions for the evaluation
 of time series classification methods.
@@ -15,10 +11,15 @@ compliance with the License. You may obtain a copy of the License at
 This software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied.
 
+**Table of Contents**:
+
+1. [Installing TimeBox](#installing-timebox)
+1. [A word about data sets](#a-word-about-data-sets)
+1. [A simple example](#a-simple-example)
 
 
-Installing TimeBox
----
+
+## Installing TimeBox
 
 TimeBox has been tested on Matlab 2013 for GNU/Linux. If you are running a different version of Matlab
 or a different operating system, TimeBox may not work properly without tweaks. Some things probably
@@ -36,8 +37,9 @@ add TimeBox's root directory to your Matlab path. For example:
 addpath ~/timebox
 ```
 
-A word about data sets
----
+
+
+## A word about data sets
 
 TimeBox currently works only with data sets of equal-length time series. A data set is simply
 a matrix of M-by-(N+1) doubles where each row is one time series. The first column of the matrix
@@ -83,3 +85,31 @@ TS.LOAD function may be used to load the previously data set `example` as follow
 chdir('~/timebox');                % assuming TimeBox has been installed here
 [train, test] = ts.load('example');
 ```
+
+
+
+## A simple example
+
+The RUNS package contains functions to classify data sets. The function RUNS.PARTITIONED performs
+a classification round on a partitioned data set (split into train/test data) and returns the
+observed accuracy. The default classification model is the 1-NN classifier.
+
+Here's how to make a single run on the previously cached data set `example`:
+
+```Matlab
+chdir('~/timebox');                % assuming TimeBox has been installed here
+[train, test] = ts.load('example');
+runs.partitioned(train, test)
+```
+
+The return value will be the observed accuracy for the 1-NN on the `example` data set.
+
+There are several ways to change the classification model:
+
+- Using a different distance function (default is DISTS.EUCLIDEAN);
+- Using a different time series representation (data sets can be converted from the time domain
+  to other representations with TRANSFORM.* functions -- *e.g.*, TRANSFORM.PS);
+- Using a different classification model altogether (TimeBox currently only implements NN).
+
+TimeBox is under effort to be kept internally documented. Please check the internal documentation
+by typing `help FUNCTION-NAME` in the Matlab shell (*e.g.*, `help runs.leaveoneout`).
