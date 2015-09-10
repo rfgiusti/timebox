@@ -1,5 +1,5 @@
 # timebox
-Time Series toolbox for MATLAB
+Time Series toolbox for Matlab
 
 Purpose
 ---
@@ -13,7 +13,8 @@ compliance with the License. You may obtain a copy of the License at
        http://www.apache.org/licenses/LICENSE-2.0
 
 This software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-either express or implied. 
+either express or implied.
+
 
 
 Installing TimeBox
@@ -26,7 +27,7 @@ will **NOT** work under Microsoft Windows (any version).
 For installation on GNU/Linux:
 
 1. Get the stable or the desired version of TimeBox as a .zip file;
-1. Unpack in any location (i.e., ~/timebox).
+1. Unpack in any location (*e.g.*, ~/timebox).
 
 This should be enough. If you are not running Matlab from TimeBox root directory, then you should
 add TimeBox's root directory to your Matlab path. For example:
@@ -35,22 +36,33 @@ add TimeBox's root directory to your Matlab path. For example:
 addpath ~/timebox
 ```
 
-An explanation about data sets
+A word about data sets
 ---
 
 TimeBox currently works only with data sets of equal-length time series. A data set is simply
-a matrix of M-by-(N+1) doubles where the each row is a time series. The first column of the matrix
-contains the class labels of the associated series.
+a matrix of M-by-(N+1) doubles where each row is one time series. The first column of the matrix
+contains the class labels of the eries. This is the same format adopted in the
+[UCR Time Series Repository](http://www.cs.ucr.edu/~eamonn/time_series_data/), so importing that
+kind of data to TimeBox is quite easy.
 
-TimeBox works by default with a local repository of data sets. The location of this repository is,
-by default, "~/timeseries", but a different path may be specified as a single-line text file in
-"~/.timebox.dspath". Each data set shold be in a Matlab data file (`.mat`) with the same name as
-its directory. Each data set file should contain two variables: `train` and `test`, for the training
-and test samples, respectivelly. If your data set does not have labeled data for testing, the `test`
-variable should contain an empty array `[]`.
+Class labels must be numeric. If the original data set uses symbolic classes, then they must be
+mapped before the data set can be used with TimeBox. TimeBox *might* be used for
+semisupervised/unsupervised learning, but most of its sweet is intended for supervised
+classification.
+ 
+TimeBox works by default with a local repository of data sets. Some features require data sets to
+be imported into the local repository. Any function that takes a data set name instead of the data
+itself requires the data set to have been previously cached into the local repository.
+
+The location of this repository is, by default, "~/timeseries", but a different path may be
+specified as a single-line text file in "~/.timebox.dspath". Each data set shold be in a Matlab data
+file (`.mat`) with the same name as its directory. Each data set file should contain two variables:
+`train` and `test`, for the training and test samples, respectivelly. If your data set does not have
+labeled data for testing, the `test` variable should contain an empty array `[]`.
 
 The TS package contains functions for handling data sets. In particular TS.LOAD loads a data set
-from the TimeBox repository. Conversely, TS.SAVE saves a data set into the TimeBox repository.
+from the TimeBox repository (and *only* from the TimeBox repository). Conversely, TS.SAVE saves a
+data set into the TimeBox repository.
 
 As an example, a test data set may be found in `assets/dataset_example`. It contains two files,
 `dataset_example.train` and `dataset_example.test`. To load this small data set and save it in the
