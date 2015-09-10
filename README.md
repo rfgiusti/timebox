@@ -109,7 +109,8 @@ There are several ways to change the classification model:
 - Using a different distance function (default is DISTS.EUCLIDEAN);
 - Using a different time series representation (data sets can be converted from the time domain
   to other representations with TRANSFORM.* functions -- *e.g.*, TRANSFORM.PS);
-- Using a different classification model altogether (TimeBox currently only implements NN).
+- Using a different classification model altogether (TimeBox currently only implements NN, but a
+  different model may be supplied to RUNS.PARTITIONED through a function handle).
 
 TimeBox is under effort to be kept internally documented. Please check the internal documentation
 by typing `help FUNCTION-NAME` in the Matlab shell (*e.g.*, `help runs.leaveoneout`).
