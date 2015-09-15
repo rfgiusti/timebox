@@ -11,14 +11,6 @@ function checkversion(version)
 %   CHECKVERSION('1.0.5') is the same as CHECKVERSION('1.0'). The extra
 %   digit is treated as the release number, which is ignored.
 %
-%   CHECKVERSION('1.0+stable') will throw an exception if the current
-%   TimeBox version is older than 1.0 or if the current TimeBox version
-%   does not have the flag 'stable'.
-%
-%   CHECKVERSION('1.0-stable') will throw an exception if the current
-%   TimeBox version is older than 1.0 or if the current TimeBox has the
-%   flag 'stable'.
-%
 %   If the current version is not backwards-compatible with the expected
 %   version, an exception will be thrown.
 if isequal(class(version), 'char')
@@ -28,8 +20,8 @@ else
 end
 
 if versioncmp(tb.version, specifiedversion) < 0
-    error(['Required TimeBox version ' version ' or later (currently running TimeBox version ' ...
-        version2string(tb.version) ')']);
+    error('TimeBox:VersionError', ['Required TimeBox version ' version ' or later (currently running TimeBox ' ...
+        'version ' version2string(tb.version) ')']);
 end
 
 % % If there is ever a backwards-compatibility break in TimeBox, uncomment
