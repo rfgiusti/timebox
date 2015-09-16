@@ -1,5 +1,7 @@
 function dsnames = getnames
-%DATASETS.GETNAMES Get a cell with the names of the available data sets.
+%DATASETS.GETNAMES Get a cell with the names of the data sets available in
+%the TimeBox local repository. Please refer to TS.SAVE to save data sets
+%into the TimeBox local repository.
 path = tb.getdspath;
 files = dir(path);
 
