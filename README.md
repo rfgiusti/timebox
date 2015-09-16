@@ -22,19 +22,28 @@ either express or implied.
 ## Installing TimeBox
 
 TimeBox has been tested on Matlab 2013 for GNU/Linux. If you are running a different version of Matlab
-or a different operating system, TimeBox may not work properly without tweaks. Some things probably
-will **NOT** work under Microsoft Windows (any version).
+or a different operating system, TimeBox may not work properly without tweaks. Particularly, TimeBox
+has not been tested on any version of Microsoft Windows.
 
-For installation on GNU/Linux:
+To get TimeBox:
 
-1. Get the stable or the desired version of TimeBox as a .zip file;
-1. Unpack in any location (*e.g.*, ~/timebox).
+1. Download the latest release of TimeBox <a href="https://github.com/rfgiusti/timebox/archive/master.zip">here</a>;
+1. Download the desired version of TimeBox in the <a href="https://github.com/rfgiusti/timebox/releases">releases section</a>.
 
-This should be enough. If you are not running Matlab from TimeBox root directory, then you should
-add TimeBox's root directory to your Matlab path. For example:
+To install TimeBox on GNU/Linux:
+
+1. Simply unzip the downloaded file in the desired location (*e.g.*, `~/timebox`);
+1. Run Matlab;
+1. Either `chdir` to the TimeBox root directory or add TimeBox to your Matlab search path. For instance: 
 
 ```Matlab
 addpath ~/timebox
+```
+
+You can check the TimeBox version you are currently running by  typing
+
+```Matlab
+tb.version
 ```
 
 
