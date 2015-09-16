@@ -28,8 +28,8 @@ has not been tested on any version of Microsoft Windows.
 
 To get TimeBox:
 
-1. Download the latest release of TimeBox <a href="https://github.com/rfgiusti/timebox/archive/master.zip">here</a>;
-1. Download the desired version of TimeBox in the <a href="https://github.com/rfgiusti/timebox/releases">releases section</a>.
+1. Download the latest release of TimeBox <a href="https://github.com/rfgiusti/timebox/archive/master.zip">here</a>; or
+1. Download the desired version of TimeBox from the <a href="https://github.com/rfgiusti/timebox/releases">releases section</a>.
 
 To install TimeBox on GNU/Linux:
 
@@ -41,7 +41,7 @@ To install TimeBox on GNU/Linux:
 addpath ~/timebox
 ```
 
-You can check the TimeBox version you are currently running by  typing
+You can check the TimeBox version you are currently running by typing
 
 ```Matlab
 tb.version
@@ -66,11 +66,19 @@ TimeBox works by default with a local repository of data sets. Some features req
 be imported into the local repository. Any function that takes a data set name instead of the data
 itself requires the data set to have been previously cached into the local repository.
 
-The location of this repository is, by default, "~/timeseries", but a different path may be
-specified as a single-line text file in "~/.timebox.dspath". Each data set shold be in a Matlab data
-file (`.mat`) with the same name as its directory. Each data set file should contain two variables:
-`train` and `test`, for the training and test samples, respectivelly. If your data set does not have
-labeled data for testing, the `test` variable should contain an empty array `[]`.
+The location of this repository is, by default, `~/timeseries`, but a different path may be
+specified as a single-line text file in `~/.timebox.dspath`. For instance:
+
+    /home/myusername/resarch/timeseries/datasets/timebox
+
+Currently, this path must be specified in absoute form (no `~` expansion). This may change in the
+future.
+
+In the local repository, each data set shold be in a Matlab data file (`.mat`) with the same name as
+its directory. Each data set file should contain two variables: `train` and `test`, for the
+training and test samples, respectivelly. If your data set does not have labeled data for testing,
+the `test` variable should contain an empty array `[]`. Some features of TimeBox required labeled
+data.
 
 The TS package contains functions for handling data sets. In particular TS.LOAD loads a data set
 from the TimeBox repository (and *only* from the TimeBox repository). Conversely, TS.SAVE saves a
@@ -87,14 +95,22 @@ test = load('assets/dataset_example.test');
 ts.save(train, test, 'example');   % register into the repository
 ```
 
-Once the data set has been saved into TimeBox repository, it should be referred to by its given name
-(in this case, `example`) every time a function needs to access the repository. For instance, the
-TS.LOAD function may be used to load the previously data set `example` as follows:
+Once the data set has been saved into the TimeBox repository, it should be referred to by its given
+name (in this case, `example`) every time a function needs to access the repository. For instance,
+the TS.LOAD function may be used to load the previously data set `example` as follows:
 
 ```Matlab
 chdir('~/timebox');                % assuming TimeBox has been installed here
 [train, test] = ts.load('example');
 ```
+
+Because the local repository is kept as binary Matlab files, loading the data sets this way is faster
+than parsing CSV files. Moreover, TimeBox is able to keep cache of transformed data sets, distance
+matrices, and, as it is being developed, other kind of data. It also keeps track of meta-data that
+may be useful in experiments.
+
+If you do not wish to use the local repository, TimeBox still has lots of functionalities that work
+without cached data.
 
 
 
