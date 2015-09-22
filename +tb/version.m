@@ -2,6 +2,7 @@ function ver = version
 %TB.VERSION     Return the version of TimeBox
 %   Release dates:
 %
+%   0.9.5 - Planned release
 %   0.8.4 - Sep-14-2015
 %   0.8.3 - Sep-09-2015
 %   0.7.2 - May-19-2015
