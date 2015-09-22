@@ -11,12 +11,17 @@ compliance with the License. You may obtain a copy of the License at
 This software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied.
 
+In essence, please feel free to copy, modify, and share this software, as long as you keep it licensed
+under "Apache License 2.0" and mantain any copyright/authorship/license notices that are currently present.
+If you make any substantial modifications to the source and would like to share them (*i.e.*, anything other
+than a small bugfix), please make sure the people you are sharing your modifications with understand that
+you are sharing a modified version of my software and they have been informed of the original source.
+
 **Table of Contents**:
 
 1. [Installing TimeBox](#installing-timebox)
 1. [A word about data sets](#a-word-about-data-sets)
 1. [A simple example](#a-simple-example)
-1. [License Summary](#license-summary)
 
 
 
@@ -140,37 +145,3 @@ There are several ways to change the classification model:
 
 TimeBox is under effort to be kept internally documented. Please check the internal documentation
 by typing `help FUNCTION-NAME` in the Matlab shell (*e.g.*, `help runs.leaveoneout`).
-
-
-
-
-## License Summary
-
-The Apache License 2.0 was chosen for this software because:
-
-1. It is simple and permissive;
-1. It requires author acknowledgement and derivative work statements.
-
-Every piece in the source code of this software is licensed under the Apache License 2.0, even when
-not explicitly stated, and except when explicitly stated otherwise. The interim of the Apache
-License 2.0 may be found within the source code itself (LICENSE.txt).
-
-To summarize, the Apache License 2.0 grants at least the following rights:
-
-1. The right to use the software for personal, scientific, academic, and business purposes;
-1. The right to study and modify the source code;
-1. The right to share the source code or any modifications to the source code, either in the form
-   of patches or in whole.
-
-Provided that at least the following is respected:
-
-1. When sharing the source code, the Apache License must be mantained, and the same rights and
-   obligations must be granted to whomever this software is shared with;
-1. When sharing the source code, the original authorship must be acknowledged;
-1. When sharing substantial modifications of the source code, the author of such modifications must
-   state that a modified version of the original work is being shared (please consider that anything
-   other than "fixing a minor bug" is a substantial modification).
-
-This is simply a summary written with the intention of expliciting the wishes of the author in
-choosing the Apache License. Please view the full license for any actual concerns with licensing
-or authorship issues.
