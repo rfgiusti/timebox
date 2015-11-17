@@ -23,7 +23,7 @@ function [acc, indices, classes] = partitioned(train, test, varargin)
 %
 %   Options:
 %       runs::model     (default: @models.nn)
-narginchk(2, 4);
+tb.narginchk(nargin, 2, 4);
 if nargin <= 2
     options = opts.empty;
 elseif nargin == 3

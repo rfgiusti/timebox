@@ -34,7 +34,7 @@ function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
 %
 %   If the "measure arg" option is present, its value is passed as a third
 %   argument to the distance function.
-narginchk(2, 4);
+tb.narginchk(nargin, 2, 4);
 if nargin == 2
     distfun = @dists.euclidean;
     options = opts.empty;

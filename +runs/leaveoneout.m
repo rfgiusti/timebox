@@ -31,7 +31,7 @@ function [acc, neighbors, labels] = leaveoneout(ds, varargin)
 %
 %   Options:
 %       runs::model         (default: @models.nn)
-narginchk(1, 3);
+tb.narginchk(nargin, 1, 3);
 if nargin == 1
     options = opts.empty;
 elseif nargin == 2
