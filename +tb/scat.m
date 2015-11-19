@@ -25,6 +25,8 @@ function scat(vdata, hdata, varargin)
 %                       second is the label for the horizontal method
 %       -nooverwrite    only valid if -writepdf is also supplied; does
 %                       not overwrite the write path
+%       -noshadow       does not include a shadowed area under the upper
+%                       method (try this option if MATLAB is crashing)
 %       -writepdf       the following argument must be of type CHAR; the
 %                       plot will be saved as a PDF in the given path
 
@@ -37,6 +39,7 @@ hlabel = [];
 invisible = 0;
 savepath = [];
 nooverwrite = 0;
+makeshadow = 1;
 
 % If the first two variadic arguments exist and do not start with '-',
 % it is assumed that they are the labels for the vertical and horizontal
@@ -74,6 +77,9 @@ while next <= numel(varargin)
             savepath = varargin{next + 1};
             tb.assert(isequal(class(savepath), 'char'), 'Usage: -labels, writepath');
             next = next + 2;
+        case '-noshadow'
+            makeshadow = 0;
+            next = next + 1;
         otherwise
             if isequal(class(varargin{next}), 'char')
                 error('splot:InputError', 'Unknown parameter "%s"', varargin{next});
@@ -112,11 +118,13 @@ f = figure('Visible', visibility);
 
 % Plot the scatter and add a shadow in the left upper side
 scatter(pointsx, pointsy, 'k', 'filled');
-py = patch([0 0 1], [0 1 1], 'y');
-pr = patch([0 0 1], [0 1 1], 'r');
-alpha(py, .2);
-alpha(pr, .1);
-
+if makeshadow
+    py = patch([0 0 1], [0 1 1], 'y');
+    pr = patch([0 0 1], [0 1 1], 'r');
+    alpha(py, .2);
+    alpha(pr, .1);
+end
+    
 % Add labels, if names have been supplied
 if ~isempty(vlabel)
     ylabel(strrep(vlabel, '_', '\_'), 'FontSize', 12, 'FontWeight', 'bold');
