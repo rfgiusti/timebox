@@ -31,14 +31,9 @@ if nseries < nfolds
     throw(err);
 end
 
+% Make index of class -> instance number
 classes = ds(:, 1);
 class_index = [classes, (1:nseries)'];
-
-class_values = unique(classes)';
-if ~isequal(class_values, 1:numel(class_values))
-    err = MException('InputChk:InvalidSamples', 'Class numbers must be sequential positive integers');
-    throw(err);
-end
 
 % Make empty folds
 test_folds = cell(nfolds, 1);
@@ -47,23 +42,18 @@ for i = 1:nfolds
 end
 
 % Distribute instances of each class into folds
-which_class = zeros(1, size(ds, 1));
 next_fold = 0;
+class_values = unique(classes)';
 for c = class_values
+    % Get indices of instances for class c
     class_index_mask = (class_index(:,1) == c);
     indices = class_index(class_index_mask, 2);
-    % Shuffle if class has more than one element
     if numel(indices) > 1
         indices = randsample(indices, numel(indices));
     end
+    
+    % Sequentially add those indices to each fold
     for next_index = indices'
-        if which_class(next_index)
-            fprintf('Item %d was in class %d and now is also in class %d\n', next_index, ...
-                    which_class(next_index), c);
-        else
-            which_class(next_index) = c;
-        end
-        
         next_fold = 1 + mod(next_fold, nfolds);
         test_folds{next_fold} = [test_folds{next_fold} next_index];
     end
