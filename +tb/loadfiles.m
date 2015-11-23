@@ -5,7 +5,7 @@ function data = loadfiles(files, mask)
 %   names, returns in data{i} the contents of the i-th file. If files{i}
 %   is not found, then data{i} contains the empty matrix []
 %
-%   data = LOADFILES(files,masK) does the same, but each `file{i}' is
+%   data = LOADFILES(files,mask) does the same, but each `file{i}' is
 %   used as argument to replace a '%s' in `mask'.
 %
 %       Example:
@@ -15,6 +15,13 @@ function data = loadfiles(files, mask)
 %           Coffee.txt, GunPoint.txt, etc)
 %           dsnames = ts.getnames;
 %           data = loadfiles(dsnames, '~/results/%s.txt');
+%
+%   data = LOADFILES([],mask) is syntax sugar for
+%   LOADFILES(TS.GETNAMES,mask).
+if isempty(files)
+    tb.assert(exist('mask', 'var'), 'If file list is empty, then a mask must be supplied');
+    files = ts.getnames;
+end
 if ~exist('mask', 'var')
     mask = '%s';
 end
