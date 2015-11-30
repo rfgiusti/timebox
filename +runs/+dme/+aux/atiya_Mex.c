@@ -292,12 +292,12 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	/* Check and get arguments #1 and #2: dataset classes and neighbor classes
 	 */
 	if (!testmatrix(right[0], ntrain, 1)) {
-		mexErrMsgIdAndTxt(INERR, "First argument should be %d:1 matrix",
+		mexErrMsgIdAndTxt(INERR, "First argument should be %d-by-1 matrix",
 				ntrain);
 	}
 	if (!testmatrix(right[1], ntrain, k)) {
 		mexErrMsgIdAndTxt(INERR, "Second argument should be "
-				"%d:%d matrix", ntrain, k);
+				"%d-by-%d matrix", ntrain, k);
 	}
 
 	trainclasses = mxGetPr(right[0]);

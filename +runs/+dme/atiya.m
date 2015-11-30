@@ -1,4 +1,4 @@
-function [votes, weights, rankings] = atiya(dsname, trainclasses, testclasses, distm, basecc, options)
+function [votes, weights, rankings] = atiya(dsname, trainclasses, testclasses, labels, distm, basecc, options)
 %RUNS.DME.ATIYA     Posterior probability-based ensemble classification,
 %using the method proposed by Atiya, 2005 as probability estimator.
 %   This function is part of the ensemble evaluation set.
@@ -12,6 +12,7 @@ function [votes, weights, rankings] = atiya(dsname, trainclasses, testclasses, d
 %       dsname          name of the data set compatible with TS.LOAD
 %       trainclasses    n-by-1 array of training instance classes
 %       testclasses     m-by-1 array of test instance classes
+%       labels          c-by-1 array of valid class labels
 %       distm           k-by-1 cell of distance matrices
 %       basecc          The names of the base classifiers and the
 %                       associated distance functions are required
@@ -30,7 +31,7 @@ function [votes, weights, rankings] = atiya(dsname, trainclasses, testclasses, d
 %   according to the neihgboor distance influence. This method assigns
 %   weights to each degree of neighborhood, which are then used to estimate
 %   each class probability. The weight w1 is associated with every first
-%   neighbor, the weight w2 is associatred with every second-nearest
+%   neighbor, the weight w2 is associated with every second-nearest
 %   neighbor and so forth.
 %
 %   The neighborhood size determines how many nearest neighbors will be
@@ -71,7 +72,7 @@ end
 cachepath = opts.get(options, 'dme::atiyapath', []);
 numclassifiers = numel(basecc);
 numinstances = numel(testclasses);
-numclasses = numel(unique([trainclasses; testclasses]));
+numclasses = numel(labels);
 
 % runs.dme.aux.atiya must know if this is cross-validation because it
 % will require access to the real training data set. In case of
@@ -140,7 +141,7 @@ for c = 1:numclassifiers
     for class = 1:numclasses
         % Copy the softv matrix and remove the neighbors that are not of the desired class
         classv = softv;
-        classv(neighboorclasses ~= class) = 0;
+        classv(neighboorclasses ~= labels(class)) = 0;
         
         classprob(class, :) = sum(classv);
     end

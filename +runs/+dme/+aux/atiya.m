@@ -24,7 +24,7 @@ function weights = atiya(dsname, distname, repname, trainclasses, k, cachepath)
 %
 %   The weight estimation can be quite expensive computationally. To avoid
 %   repetitions of this process, this function can cache each weight set.
-%   When calld in the form ATIYA(DSNAME,DISTNAME,REPNAME,C,k,PATH), this
+%   When called in the form ATIYA(DSNAME,DISTNAME,REPNAME,C,k,PATH), this
 %   function will use PATH as the directory for caches, as specified by
 %   "dme::atiyapath" for RUNS.DME.ATIYA.
 if exist('cachepath', 'var') && ~isempty(cachepath)
