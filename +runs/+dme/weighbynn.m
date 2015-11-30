@@ -1,4 +1,4 @@
-function [votes, weights, rankings] = weighbynn(~, trainclasses, testclasses, distm, ~, options)
+function [votes, weights, rankings] = weighbynn(~, trainclasses, testclasses, labels, distm, ~, options)
 %RUNS.DME.WEIGHBYNN   Run a partitioned train/test evaluation of the
 %weighted ensemble on a data set, using a simple nearest-neighbors count to
 %estimate the posterior probability of the classification as weights
@@ -13,6 +13,8 @@ function [votes, weights, rankings] = weighbynn(~, trainclasses, testclasses, di
 %       dsname          not used by WEIGHBYNN; replace with []
 %       trainclasses    n-by-1 array of training instance classes
 %       testclasses     m-by-1 array of test instance classes
+%       labels          c-by-1 array of class labels; required only if
+%                       dme::normalize is true
 %       distm           k-by-1 cell of distance matrices
 %       basecc          not used by WEIGHBYNN; replace with []
 %       options         optional options set object
@@ -39,6 +41,10 @@ end
 neighborhoodsize = min(opts.get(options, 'dme::nnsize', 3), numel(trainclasses));
 normalizeweights = opts.get(options, 'dme::normalize', 0);
 limit = opts.get(options, 'dme::limit', 0);
+
+if normalizeweights
+    tb.assert(~isempty(labels), 'Labels required when dme::normalize is true');
+end
 
 votes = zeros(numclassifiers, numinstances);
 weights = ones(numclassifiers, numinstances);
@@ -72,11 +78,11 @@ if limit
 end
 
 if normalizeweights
-    numclasses = numel(unique(trainclasses));
+    numclasses = numel(labels);
     for instance = 1:numel(testclasses)
         for c = 1:numclasses
-        mask = find(votes(:, instance) == c);
-        weights(mask, instance) = weights(mask, instance) / numel(mask);
+            mask = find(votes(:, instance) == labels(c));
+            weights(mask, instance) = weights(mask, instance) / numel(mask);
         end
     end
 end

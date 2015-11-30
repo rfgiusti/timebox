@@ -1,4 +1,4 @@
-function [votes, weights, rankings] = majority(~, trainclasses, testclasses, distm, ~, ~, ~)
+function [votes, weights, rankings] = majority(~, trainclasses, testclasses, ~, distm, ~, ~, ~)
 %RUNS.DME.MAJORITY  Run a partitioned train/test evaluation of the majority
 %ensemble on a data set.
 %   This function is part of the ensemble evaluation set.
@@ -11,6 +11,7 @@ function [votes, weights, rankings] = majority(~, trainclasses, testclasses, dis
 %       dsname          not used by MAJORITY; replace with []
 %       trainclasses    n-by-1 array of training instance classes
 %       testclasses     m-by-1 array of test instance classes
+%       labels          not used by MAJORITY; replace with []
 %       distm           k-by-1 cell of distance matrices
 %       basecc          not used by MAJORITY
 %       options         not used by MAJORITY

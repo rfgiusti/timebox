@@ -1,4 +1,4 @@
-function [votes, weights, rankings] = weighbydist(dsname, trainclasses, testclasses, distm, basecc, ~)
+function [votes, weights, rankings] = weighbydist(dsname, trainclasses, testclasses, ~, distm, basecc, ~)
 %RUNS.DME.WEIGHTBYDIST   Run a partitioned train/test evaluation of the
 %weighted ensemble on a data set, using distance from the test sample to
 %the nearest neighbor as a measure of classification confidence
@@ -12,6 +12,7 @@ function [votes, weights, rankings] = weighbydist(dsname, trainclasses, testclas
 %       dsname          name of the data set compatible with TS.LOAD
 %       trainclasses    n-by-1 array of training instance classes
 %       testclasses     m-by-1 array of test instance classes
+%       labels          not used by WEIGHBYDIST; replace with []
 %       distm           k-by-1 cell of distance matrices
 %       basecc          The names of the distance functions and of the time
 %                       series representations are required for the

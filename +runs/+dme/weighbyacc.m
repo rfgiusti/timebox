@@ -1,4 +1,4 @@
-function [votes, weights, rankings] = weighbyacc(dsname, trainclasses, testclasses, distm, basecc, options)
+function [votes, weights, rankings] = weighbyacc(dsname, trainclasses, testclasses, ~, distm, basecc, options)
 %RUNS.DME.WEIGHBYACC   Run a partitioned train/test evaluation of the
 %weighted ensemble on a data set, using accuracy on training data set as
 %weight.
@@ -12,6 +12,7 @@ function [votes, weights, rankings] = weighbyacc(dsname, trainclasses, testclass
 %       dsname          name of the data set compatible with TS.LOAD
 %       trainclasses    n-by-1 array of training instance classes
 %       testclasses     m-by-1 array of test instance classes
+%       labels          not used by WEIGHBYACC; replace with []
 %       distm           k-by-1 cell of distance matrices
 %       basecc          The names of the base classifiers are required by
 %                       the ensemble to fetch MAT files containing the
