@@ -1,4 +1,4 @@
-function [votes, weights, rankings] = simplerank(dsname, trainclasses, testclasses, distm, basecc, options)
+function [votes, weights, rankings] = simplerank(dsname, trainclasses, testclasses, labels, distm, basecc, options)
 %RUNS.DME.SIMPLERANK   Run a partitioned train/test evaluation of the
 %weighted ensemble on a data set, using a simple rank analysis to estimate
 %the importance of each nearest-neighbor to weight base classifiers
@@ -14,6 +14,7 @@ function [votes, weights, rankings] = simplerank(dsname, trainclasses, testclass
 %       dsname          name of the data set compatible with TS.LOAD
 %       trainclasses    n-by-1 array of training instance classes
 %       testclasses     m-by-1 array of test instance classes
+%       labels          c-by-1 array of valid class labels
 %       distm           k-by-1 cell of distance matrices
 %       basecc          The names of the base classifiers and the
 %                       associated distance functions are required
@@ -69,7 +70,7 @@ function [votes, weights, rankings] = simplerank(dsname, trainclasses, testclass
 %       dme::mismatch penalty   (default: -2)
 %       dme::srankpath          (default: --)
 %       dme::trainindex         (default: --)
-numclasses = numel(unique([trainclasses; testclasses]));
+numclasses = numel(labels);
 numclassifiers = numel(basecc);
 testsize = numel(testclasses);
 
@@ -144,9 +145,8 @@ for c = 1:numclassifiers
     
     % Sum the weights for each class for all instances
     classweights = zeros(numclasses, testsize);
-    nearclasses = unique(trainclasses(neighborhood));
-    for class = nearclasses'
-        classmask = trainclasses(neighborhood) == class;
+    for class = 1:numclasses
+        classmask = trainclasses(neighborhood) == labels(class);
         relevantweights = neighborweights .* classmask;
         classweights(class, :) = sum(relevantweights, 1);
     end
