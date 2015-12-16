@@ -18,18 +18,18 @@ parts = cell(numel(occurences) + 1, 1);
 % character in the string.
 endpoints = [occurences length(string) + 1];
 
-pos = 1;
+left = 1;
 nextpart = 1;
 nextend = 1;
-while pos < length(string)
-    ends = endpoints(nextend) - 1;
-    if ends <= pos
+while left <= length(string)
+    right = endpoints(nextend) - 1;
+    if left > right
         parts{nextpart} = '';
     else
-        parts{nextpart} = string(pos:ends);
+        parts{nextpart} = string(left:right);
     end
     
-    pos = endpoints(nextend) + length(delimiter);
+    left = endpoints(nextend) + length(delimiter);
     nextpart = nextpart + 1;
     nextend = nextend + 1;
 end
