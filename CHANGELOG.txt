@@ -1,6 +1,12 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.10.6: currently unreleased
+- Introduces functions to load and save metadata from and into data sets.
+- Introduces TS.GETPATH to return the path where a data set file is supposed to
+  be stored.
+
+
 TimeBox 0.9.5: released 2015-Nov-30
 - Introduces functions for distance matrix-based ensembles. The functions in
   RUNS.DME implemente the strategies reported in the following paper:
@@ -12,7 +18,7 @@ TimeBox 0.9.5: released 2015-Nov-30
 
 
 TimeBox 0.8.4: released 2015-Sep-14
-- Deprecates the RELEASEDATE field in the version structure. This future may be
+- Deprecates the RELEASEDATE field in the version structure. This feature may be
   removed in the future;
 - Removes internal documentation from TB.VERSION about unimplemented features:
   the function was supposed to check the presence or absence of flags when
