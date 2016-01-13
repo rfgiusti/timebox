@@ -1,5 +1,5 @@
 function [train_ps, test_ps] = ps(train, test, ~)
-% PS Power spectrum of partitioned dataset
+%TRANSFORM.PS Power spectrum of partitioned dataset
 %
 %   TRAIN_PS = ps(TRAIN) will convert the TRAIN dataset to the power
 %   spectrum representation.

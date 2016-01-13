@@ -1,5 +1,5 @@
 function [train, test] = load(dsname, repname)
-%DATASETS.LOAD Load a training and a test data set
+%TS.LOAD Load a training and a test data set
 %  TRAIN = LOAD(DS) load the training partition of the DS data set.
 %
 %  TRAIN = LOAD(DS,REP) attempts to load the data set in the representation

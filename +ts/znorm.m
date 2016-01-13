@@ -1,5 +1,5 @@
 function [outtrain, outtest] = znorm(intrain, intest)
-%ZNORM Normalize time series dataset. 
+%TS.ZNORM Normalize time series dataset. 
 %  N = ZNORM(D) normalize the dataset of time series D and return to N.
 %
 %  [NTRAIN,NTEST] = ZNORM(TRAIN,TEST) normalize both the training and test
