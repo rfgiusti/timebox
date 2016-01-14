@@ -1,4 +1,4 @@
-# timebox -- Time Series toolbox for Matlab
+# timebox - Time Series toolbox for Matlab
 
 TimeBox is a procedural library that implements data structures and functions for the evaluation
 of time series classification methods.
