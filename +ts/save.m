@@ -21,7 +21,7 @@ function save(train, test, dsname) %#ok<INUSL>
 dspath = tb.getdspath;
 savedir = [dspath dsname];
 savefile = [savedir '/' dsname '.mat'];
-if ~exist('savedir', 'file')
+if ~exist(savedir, 'file')
     mkdir(savedir);
 end
 save(savefile, 'train', 'test', '-mat');
