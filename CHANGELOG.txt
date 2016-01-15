@@ -2,7 +2,9 @@ TimeBox Change Log
 ------------------
 
 TimeBox 0.10.6: currently unreleased
-- Introduces functions to load and save metadata from and into data sets.
+- Introduces functions to get information on data sets without need to load the
+  full data: TS.LOADMETA and TS.SAVEMETA handle meta-information within data
+  sets, and TS.GETDIM retrieves number of instances and time series length.
 - Introduces TS.GETPATH to return the path where a data set file is supposed to
   be stored.
 
