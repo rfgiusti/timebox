@@ -7,7 +7,8 @@ TimeBox 0.10.6: currently unreleased
   sets, and TS.GETDIM retrieves number of instances and time series length.
 - Introduces TS.GETPATH to return the path where a data set file is supposed to
   be stored.
-- Add TB.SHARPSHOOT to produce SharpShoot plots.
+- Add TB.SHARPSHOOT to produce SharpShoot plots, and add option -nofigure to
+  TB.SCAT. This is useful to use TB.SCAT in subplots.
 
 
 TimeBox 0.9.5: released 2015-Nov-30
