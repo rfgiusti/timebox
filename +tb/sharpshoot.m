@@ -66,6 +66,10 @@ tb.assert(numel(Ya) == numel(Xa), 'Xa, Ya, Xe, and Ye must have equal number of 
 tb.assert(numel(Ye) == numel(Xa), 'Xa, Ya, Xe, and Ye must have equal number of elements');
 tb.assert(numel(Xe) == numel(Xa), 'Xa, Ya, Xe, and Ye must have equal number of elements');
 
+% Default options
+vlabel = 'Expected gain';
+hlabel = 'Actual gain';
+
 % Get the non-empty data, calculate the gains
 numpoints = 0;
 gainA = zeros(numel(Xa), 1);
@@ -96,6 +100,8 @@ hold on;
 % Make the grid. Add a small margin for visibility
 plot([min(0.99, min(gainX)-0.01) max(1.05, max(gainX)+0.01)], [1 1], 'k');
 plot([1 1], [min(0.99, min(gainA)-0.01) max(1.01, max(gainA)+0.01)], 'k');
+ylabel(strrep(vlabel, '_', '\_'), 'FontSize', 12, 'FontWeight', 'bold');
+xlabel(strrep(hlabel, '_', '\_'), 'FontSize', 12, 'FontWeight', 'bold');
 axis('square');
 
 end
