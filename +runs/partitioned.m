@@ -33,8 +33,10 @@ elseif nargin == 3
         options = opts.empty;
     end
 else
-    tb.assert(~opts.isa(varargin{1}));
-    tb.assert(opts.isa(varargin{2}));
+    tb.assert(~opts.isa(varargin{1}), ['RUNS.PARTITIONED: when called with 4 arguments, the third argument must be ' ...
+        'a handle to the distance function']);
+    tb.assert(opts.isa(varargin{2}), ['RUNS.PARTITIONED: when called with 4 arguments, the fourth argument must be ' ...
+        'an options object -- use OPTS.EMPTY if the associated function takes no options']);
     options = varargin{2};
 end
 

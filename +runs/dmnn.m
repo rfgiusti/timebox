@@ -9,7 +9,7 @@ function [acc, neighbors, classes] = dmnn(trainclasses, testclasses, distmatrix,
 %   returned by DMNN is the estimated accuracy.
 %
 %   DMNN(T,X,DM,OPTS) takes an OPTS object. If the distance function is
-%   actually a similarity function this must be specified a an option.
+%   actually a similarity function this must be specified as an option.
 %
 %   DMNN(T,[],DM,...) specifies leave-one-out validation. DM is a n-by-n
 %   matrix of distances between pairs on the same data set. T is an array
