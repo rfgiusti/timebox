@@ -107,7 +107,7 @@ for i = 1 : numinstances
     
     % Is this the closest or just as close as the closest we previously found?
     if abs(dist - distance) < epsilon
-        bestidx = [bestidx; i];
+        bestidx = [bestidx; i]; %#ok<AGROW>
     elseif dist < distance
         bestidx = [i];
         distance = dist;
