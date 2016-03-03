@@ -124,6 +124,8 @@ else
         neighbor = bestidx(1);
     elseif isequal(tiebreak, 'random')
         neighbor = randsample(bestidx, 1);
+    else
+        error(['MODELS.NN: bad tie break options: ' tiebreak]);
     end
     
     label = stack(neighbor, 1);
