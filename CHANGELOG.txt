@@ -1,15 +1,22 @@
 TimeBox Change Log
 ------------------
 
-TimeBox 0.10.6: currently unreleased
-- Introduces functions to get information on data sets without need to load the
-  full data: TS.LOADMETA and TS.SAVEMETA handle meta-information within data
+TimeBox 0.10.6: released 2016-Mar-04
+- Introduces functions to get information on data sets without the need to load
+  the full data: TS.LOADMETA and TS.SAVEMETA handle meta-information within data
   sets, and TS.GETDIM retrieves number of instances and time series length.
 - Introduces TS.GETPATH to return the path where a data set file is supposed to
   be stored.
-- Add TB.SHARPSHOOT to produce SharpShoot plots, and add option -nofigure to
+- Allows TS.MAKEFOLDS to make validation folds: you may provide an index over an
+  existing fold to obtain a new set of folds constructed on the indexed data.
+- Adds TB.SHARPSHOOT to produce SharpShoot plots, and add option -nofigure to
   TB.SCAT. This is useful to use TB.SCAT in subplots.
-
+- Adds TB.MERGECELLS to work with data loaded by TS.LOADFILES: this function
+  actually concatenates cells with equal number of rows into a single cell,
+  removing rows where any of the original cell had missing data.
+- Fixed bugs with TB.SPLITSTRING, TS.GETNAMES, and TS.SAVE. Also improve
+  documentation of several functions and some error messages are now more
+  informative.
 
 TimeBox 0.9.5: released 2015-Nov-30
 - Introduces functions for distance matrix-based ensembles. The functions in
