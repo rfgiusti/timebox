@@ -1,7 +1,5 @@
 function out = empty()
-%EMPTY Summary of this function goes here
-%   Detailed explanation goes here
-
+%OPTS.EMPTY     Create an empty OPTS object.
 out = containers.Map;
 end
 

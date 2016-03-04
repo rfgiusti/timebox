@@ -1,4 +1,15 @@
 function options = build(varargin)
+%OPTS.BUILD     Create an OPTS object from one or more options
+%   BUILD(key1,value1,key2,value2,...) constructs an OPTS object where each
+%   key is associated to a value. This is similar to the following function
+%   calls:
+%
+%       options = OPTS.EMPTY;
+%       options = OPTS.SET(options, key1, value1);
+%       options = OPTS.SET(options, key2, value2);
+%       .
+%       .
+%       .
 nargs = size(varargin, 2);
 i = 1;
 

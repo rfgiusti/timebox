@@ -1,19 +1,25 @@
 function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
-%MODELS.NN Run the 1-Nearest Neighbor for a single instance on a data set.
-%   N = NN(DS,S) if S is an array, it is treated as a time series and this
-%   will search for the nearest neighbor of S in DS. If S is an integer, it
-%   is treated as an index to a time series in DS. NN will attempt to find
-%   the nearest neighbor of DS(S) in DS, ignoring DS(S). The returned
-%   value, N, is an index to the nearest neighbor in DS.
+%MODELS.NN Run the 1-Nearest Neighbor classification model for a single
+%instance on a data set.
+%   NN(DS,S) where DS is an n-by-m matrix of double representing a data set
+%   (in format according to TS.LOAD and TS.SAVE) and S is a 1-by-m column
+%   vector of double representing a single instance returns the index of
+%   the nearest neighbor of S in DS.
 %
-%   N = NN(DS,S,DIST) does the same, but searches for the nearest neighbor
-%   using DIST as a function handle to a distance (or similarity) function.
-%   If the distance function requires arguments to work, they should be
-%   specified by the option "measure arg".
+%   NN(DS,S) where DS is an n-by-m matrix of double and S is a scalar
+%   returns the index of the nearest neighbor of the S-th instance of DS in
+%   DS.
 %
-%   N = NN(DS,S,OPTS), and
-%   N = NN(DS,S,DIST,OPTS) do the same as explained above, exception
-%   options are taken from OPTS isntead of default values being used.
+%   NN(DS,S,DIST) does the same as the above two forms, but searches for
+%   the nearest neighbor using DIST as a function handle to a distance (or
+%   similarity) function. If the distance function requires arguments to
+%   work, they should be specified as an OPTS object (see below).
+%
+%   NN(DS,S,options), and
+%   NN(DS,S,DIST,options) do the same as explained above, however options
+%   are taken from "options", which must be a valid OPTS object as returned
+%   by OPTS.BUILD or OPTS.SET. If options are missing or no OPTS object is
+%   supplied, default values are used whenever required.
 %
 %   [N,P] = NN(DS,S,...) returns the index of the nearest neighbor and the
 %   proximity (distance or similarity) from the test sample to the nearest
@@ -24,7 +30,7 @@ function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
 %
 %   [N,P,C,H] = NN(DS,S, ...) returns the same as above, and also a flag
 %   indicating if the nearest neighbor belongs to the same class as the
-%   test sample.
+%   test sample (1 or 0).
 %
 %   Options:
 %       dists::arg*         (default: --)
@@ -32,8 +38,24 @@ function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
 %       nn::tie break       (default: 'first')
 %       epsilon             (default: 1e-10)
 %
-%   If the "measure arg" option is present, its value is passed as a third
-%   argument to the distance function.
+%   *about dists::arg
+%     This function calls the distance function, DIST, in the following
+%     manner:
+%
+%       DIST(A, B)
+%
+%     where A and B are the observations of two instances.
+%
+%     If 'dists::arg' is present in OPTS, then the following call is made
+%     instead:
+%
+%       DIST(A, B, OPTS.GET(options, 'dists::arg'))
+%
+%     Usage example:
+%
+%       % Run for a single instance of the data set using the dtw distance
+%       % with a Sakoe-Chiba window of width 12
+%       models.nn(train, test(1,:), @dists.dtw, opts.set('dists::arg', 12))
 tb.narginchk(nargin, 2, 4);
 if nargin == 2
     distfun = @dists.euclidean;

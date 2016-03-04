@@ -1,7 +1,7 @@
 function out = clone(in)
-%OPTS.CLONE     Create a new object that is a copy of the input object.
-%Warning: if the options object contains other objects, both the input
-%and the output will reference the same object.
+%OPTS.CLONE     Attempt to clone an OPTS object. This function will FAIL
+%if the original OPTS object contains references: the resulting clone will
+%reference the same objects as the original.
 tb.assert(opts.isa(in), 'Input argument must be an options set object.');
 out = opts.empty;
 keys = in.keys;
