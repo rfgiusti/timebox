@@ -2,6 +2,8 @@ TimeBox Change Log
 ------------------
 
 TimeBox 0.11.7: predicted
+- Implements MODELS.NN1EUCLIDEAN and MODELS.NN1DTW for fast execution of
+  the traditional 1-NN and 1-NNDTW classifiers.
 
 
 TimeBox 0.10.6: released 2016-Mar-04

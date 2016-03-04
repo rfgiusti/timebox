@@ -131,7 +131,7 @@ for i = 1 : numinstances
     if abs(dist - distance) < epsilon
         bestidx = [bestidx; i]; %#ok<AGROW>
     elseif dist < distance
-        bestidx = [i];
+        bestidx = i;
         distance = dist;
     end
 end
