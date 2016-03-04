@@ -1,6 +1,6 @@
 function x = list
 %OPTS.LIST Call HELP OPTS.LIST to see the list of valid options accepted by
-%TimeBox.
+%TimeBox. This list is prone to being outdated and will be removed.
 %   Some functions in TimeBox accept options. Instead of using variadic
 %   arguments, though, TimeBox uses a containers.Map object. This approach
 %   is taken because this makes the options easier to save into a .MAT
