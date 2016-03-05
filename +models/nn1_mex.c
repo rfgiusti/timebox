@@ -1,6 +1,5 @@
 #include "mex.h"
 
-
 void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 {
 	/*
@@ -11,7 +10,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	 *
 	 *  Where the input arguments are:
 	 *
-	 *     stack     - the data set
+	 *     stack     - the data set*
 	 *     needle    - the test instance
 	 *     skipindex - if the test instance is contained in the data set,
 	 *                 skipindex must be the instance of the test instance;
@@ -23,9 +22,21 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	 *     bestidx   - a row vector containing the nearest neighbors of the
 	 *                 test instance (within tolerance)
 	 *     distance  - the distance from the test instance to the neighbors
+	 *
+	 *  TimeBox data sets contains instances in rows and observations in
+	 *  columns. This mex requires the instances in the columns and the
+	 *  observations in the rows. The first row is, therefore, the classes.
+	 *  
+	 *  Example usage:
+	 *
+	 *     [train, test] = ts.load('Sample dataset');
+	 *     [bestidx, distance] = mexFunction(stack', test(1,:), -1, 1e-10)
+	 *
+	 *  The data set is transformed into the expected notation with stack'.
+	 *  The test instance should be kept a row vector.
 	 */
 
-	int numseries, len;
+	int nseries, len;
 
 	if (nright != 4) {
 		mexErrMsgTxt("Four inputs required.");
@@ -35,9 +46,9 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	}
 
 	/* First argument must be a non-complex matrix of double
-	 */
-	nseries = mxGetM(right[0]);
-	len = mxGetN(right[0]) - 1;
+	*/
+	nseries = mxGetN(right[0]);
+	len = mxGetM(right[0]) - 1;
 	if (!mxIsDouble(right[0]) || mxIsComplex(right[0]) || len < 1) {
 		mexErrMsgTxt("First input (STACK) must be a non-complex "
 				"matrix of double");
