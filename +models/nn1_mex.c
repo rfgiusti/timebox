@@ -101,8 +101,8 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	/* First argument must be a non-complex matrix of double
 	*/
 	nseries = mxGetN(right[0]);
-	len = mxGetM(right[0]) - 1;
-	if (!mxIsDouble(right[0]) || mxIsComplex(right[0]) || len < 1) {
+	len = mxGetM(right[0]);
+	if (!mxIsDouble(right[0]) || mxIsComplex(right[0]) || len <= 1) {
 		debug("First input error\nmxIsDouble: %d, mxIsComplex: %d, "
 				"len: %d\n", mxIsDouble(right[0]),
 				mxIsComplex(right[0]), len);
@@ -114,7 +114,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 
 	/* Second argument must be a non-complex row array of double
 	*/
-	if (mxGetM(right[1]) != 1 || mxGetN(right[1]) != len + 1 ||
+	if (mxGetM(right[1]) != 1 || mxGetN(right[1]) != len ||
 			!mxIsDouble(right[1]) || mxIsComplex(right[1])) {
 		debug("Second input error\nmxIsDouble: %d, mxIsComplex: %d, "
 				"mxGetM: %d, mxGetN: %d\n",
