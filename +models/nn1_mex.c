@@ -1,6 +1,9 @@
 #include "mex.h"
 
-#define DEBUG 0
+#include <math.h>
+#include <stdlib.h>
+
+#define DEBUG 1
 
 #if DEBUG
 #include <stdio.h>
@@ -30,6 +33,14 @@ FILE *__debug_file = NULL;
 #define start_debugger() do { } while (0)
 #define end_debugger() do { } while (0)
 #endif
+
+int nn1euclidean(double *stack, double *needle, int nseries, int len,
+		int skipindex, double epsilon, double *bestidx,
+		double *distance)
+{
+	debug("Called nn1euclidean(PTR, PTR, %d, %d, %d, %e, PTR, PTR)\n",
+			nseries, len, skipindex, epsilon);
+}
 
 void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 {
@@ -68,6 +79,11 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	 */
 
 	int nseries, len;
+	double *stack, *needle;
+	int skipindex;
+	double epsilon;
+	double *bestidx, distance;
+	int numneighbors;
 
 	start_debugger();
 	debug("Started mexFunction\n\n");
@@ -93,6 +109,8 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 		mexErrMsgTxt("First input (STACK) must be a non-complex "
 				"matrix of double");
 	}
+	stack = mxGetPr(right[0]);
+	debug("Stack: %d series of lenght %d\n", nseries, len);
 
 	/* Second argument must be a non-complex row array of double
 	*/
@@ -106,6 +124,8 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 				"row array of double with same number of "
 				"elements as the first input");
 	}
+	needle = mxGetPr(right[1]);
+	debug("Needle: ok\n");
 
 	/* Third argument must be a scalar
 	*/
@@ -114,6 +134,13 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 		mexErrMsgTxt("Third input (SKIPINDEX) must ba non-complex "
 				"scalar");
 	}
+	skipindex = mxGetScalar(right[2]);
+#if DEBUG
+	{
+		char *msg = (skipindex == -1 ? "in loco" : "in another set");
+		debug("skipindex == %d (test sample is %s\n", skipindex, msg);
+	}
+#endif
 
 	/* Fourh argument must be a scalar
 	*/
@@ -122,8 +149,25 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 		mexErrMsgTxt("Fourth input (EPSILON) must ba non-complex "
 				"scalar");
 	}
+	epsilon = mxGetScalar(right[3]);
+	debug("epsilon == %e\n", epsilon);
 
-	debug("Input arguments OK\n");
+	/* Make room for the maximum possible number of neighbors (all of them)
+	*/
+	bestidx = malloc(sizeof (int) * nseries);
+	if (!bestidx) {
+		debug("Could not allocate %d bytes for %d neighbors\n",
+				sizeof (int) * nseries, nseries);
+		mexErrMsgTxt("Error allocating memory\n");
+	}
+
+	/* Run the classifier
+	*/
+	debug("Input ok\n\n");	
+	debug("Running 1-NN with euclidean distance\n");
+
+	numneighbors = nn1euclidean(stack, needle, nseries, len, skipindex,
+			epsilon, bestidx, &distance);
 
 	/* Create two dummy output arguments
 	*/
