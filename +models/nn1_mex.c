@@ -11,6 +11,7 @@
 FILE *__debug_file = NULL;
 #define debug(...) do { \
 	fprintf(__debug_file, __VA_ARGS__); \
+	fflush(__debug_file); \
 } while (0)
 #define start_debugger() do { \
 	if (!(__debug_file = fopen(DEBUG_PATH, "w"))) { \
@@ -34,12 +35,51 @@ FILE *__debug_file = NULL;
 #define end_debugger() do { } while (0)
 #endif
 
+/* Points "ptr" to the first observation of an instance
+ */
+#define seekstack(_ptr, _stack, _instance, _len) do { \
+	(_ptr) = (_stack) + ((_instance) - 1) * (_len) + 1; \
+} while (0)
+
+double euclidean2(double *s1, double *s2, int len)
+{
+	/* Return the squared Euclidean distance between two series
+	 */
+	double dist = 0;
+	while (--len) {
+		dist += (*s1 - *s2) * (*s1 - *s2);
+		s1++;
+		s2++;
+	}
+	return dist;
+}
+
 int nn1euclidean(double *stack, double *needle, int nseries, int len,
 		int skipindex, double epsilon, double *bestidx,
 		double *distance)
 {
-	debug("Called nn1euclidean(PTR, PTR, %d, %d, %d, %e, PTR, PTR)\n",
-			nseries, len, skipindex, epsilon);
+	double *test;
+	int current;
+
+ 	debug("Called nn1euclidean(PTR, PTR, %d, %d, %d, %e, PTR, PTR)\n", 
+			nseries, len, skipindex, epsilon); 
+
+	/* Skip the needle class and point the test pointer to the first
+	 * instance
+	 */
+	needle++;
+	test = stack + 1;
+
+	/* Calculate the squared distance from the needle to all series
+	 */
+	current = 1;
+	while (current <= nseries) {
+		bestidx[current - 1] = euclidean2(test, needle, len);
+		current++;
+		seekstack(test, stack, current, len);
+	}
+
+	return nseries;
 }
 
 void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
@@ -82,7 +122,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	double *stack, *needle;
 	int skipindex;
 	double epsilon;
-	double *bestidx, distance;
+	double *bestidx_large, *bestidx, distance;
 	int numneighbors;
 
 	start_debugger();
@@ -117,7 +157,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	if (mxGetM(right[1]) != 1 || mxGetN(right[1]) != len ||
 			!mxIsDouble(right[1]) || mxIsComplex(right[1])) {
 		debug("Second input error\nmxIsDouble: %d, mxIsComplex: %d, "
-				"mxGetM: %d, mxGetN: %d\n",
+				"mxGetM: %zu, mxGetN: %zu\n",
 				mxIsDouble(right[1]), mxIsComplex(right[1]),
 				mxGetM(right[1]), mxGetN(right[1]));
 		mexErrMsgTxt("Second input (NEEDLE) must be a non-complex "
@@ -125,7 +165,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 				"elements as the first input");
 	}
 	needle = mxGetPr(right[1]);
-	debug("Needle: ok\n");
+ 	debug("Needle: ok\n"); 
 
 	/* Third argument must be a scalar
 	*/
@@ -146,7 +186,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	*/
 	if (!mxIsDouble(right[3]) || mxIsComplex(right[3]) ||
 			mxGetNumberOfElements(right[3]) != 1) {
-		mexErrMsgTxt("Fourth input (EPSILON) must ba non-complex "
+		mexErrMsgTxt("Fourth input (EPSILON) must be a non-complex "
 				"scalar");
 	}
 	epsilon = mxGetScalar(right[3]);
@@ -154,10 +194,10 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 
 	/* Make room for the maximum possible number of neighbors (all of them)
 	*/
-	bestidx = malloc(sizeof (int) * nseries);
-	if (!bestidx) {
-		debug("Could not allocate %d bytes for %d neighbors\n",
-				sizeof (int) * nseries, nseries);
+	bestidx_large = malloc(sizeof (double) * nseries);
+	if (!bestidx_large) {
+/* 		debug("Could not allocate %zu bytes for %d neighbors\n", 
+				sizeof (double) * nseries, nseries);*/
 		mexErrMsgTxt("Error allocating memory\n");
 	}
 
@@ -167,12 +207,27 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	debug("Running 1-NN with euclidean distance\n");
 
 	numneighbors = nn1euclidean(stack, needle, nseries, len, skipindex,
-			epsilon, bestidx, &distance);
+			epsilon, bestidx_large, &distance);
 
-	/* Create two dummy output arguments
-	*/
-	left[0] = mxCreateDoubleScalar(1);
-	left[1] = mxCreateDoubleScalar(2);
+	/* Make the first argument the distances from the needle to all series
+	 */
+ 	debug("Trying to allocate first output argument\n");
+	left[0] = mxCreateDoubleMatrix(numneighbors, 1, mxREAL);
+	bestidx = mxGetPr(left[0]);
+ 	debug("bestidx address is %p\n", bestidx); 
+	{
+		int i;
+ 		debug("Assigning distances to bestidx\n"); 
+		for (i = 0; i < numneighbors; i++) {
+			bestidx[i] = bestidx_large[i];
+		}
+ 		debug("Ok\n"); 
+	}
 
+	/* Make the second argument a dummy value
+	 */
+ 	debug("Making second scalar\n");
+	left[1] = mxCreateDoubleScalar(1);
+	
 	end_debugger();
 }
