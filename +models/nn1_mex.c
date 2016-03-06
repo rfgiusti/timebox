@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DEBUG 1
 
@@ -214,15 +215,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
  	debug("Trying to allocate first output argument\n");
 	left[0] = mxCreateDoubleMatrix(numneighbors, 1, mxREAL);
 	bestidx = mxGetPr(left[0]);
- 	debug("bestidx address is %p\n", bestidx); 
-	{
-		int i;
- 		debug("Assigning distances to bestidx\n"); 
-		for (i = 0; i < numneighbors; i++) {
-			bestidx[i] = bestidx_large[i];
-		}
- 		debug("Ok\n"); 
-	}
+	memcpy(bestidx, bestidx_large, sizeof (double) * numneighbors);
 
 	/* Make the second argument a dummy value
 	 */
