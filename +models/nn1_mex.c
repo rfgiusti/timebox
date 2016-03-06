@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG
 #include <stdio.h>
@@ -47,7 +47,7 @@ FILE *__debug_file = NULL;
 #define FLT_GT(_flt1, _flt2, _eps) \
 	(fabs((_flt1) - (_flt2)) > (_eps) && (_flt1) > (_flt2))
 
-double euclidean2(double *s1, double *s2, int len)
+double euclidean2(double *s1, double *s2, int len, double bsf, double epsilon)
 {
 	/* Return the squared Euclidean distance between two series
 	 */
@@ -56,6 +56,11 @@ double euclidean2(double *s1, double *s2, int len)
 		dist += (*s1 - *s2) * (*s1 - *s2);
 		s1++;
 		s2++;
+		/* Early abandon
+		 */
+		if (FLT_GT(dist, bsf, epsilon)) {
+			return dist;
+		}
 	}
 	return dist;
 }
@@ -83,7 +88,7 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 	 */
 	current = 1;
 	while (current <= nseries) {
-		dist = euclidean2(test, needle, len);
+		dist = euclidean2(test, needle, len, bsf, epsilon);
 		if (FLT_GT(bsf, dist, epsilon)) {
 			/* Distance to nearest neighbor got smaller
 			 */
