@@ -101,7 +101,7 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 		seekstack(test, stack, current, len);
 	}
 
-	*distance = bsf;
+	*distance = sqrt(bsf);
 	return neighbors;
 }
 
