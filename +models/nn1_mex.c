@@ -42,6 +42,11 @@ FILE *__debug_file = NULL;
 	(_ptr) = (_stack) + ((_instance) - 1) * (_len) + 1; \
 } while (0)
 
+/* Check if a float is larger
+ */
+#define FLT_GT(_flt1, _flt2, _eps) \
+	(fabs((_flt1) - (_flt2)) > (_eps) && (_flt1) > (_flt2))
+
 double euclidean2(double *s1, double *s2, int len)
 {
 	/* Return the squared Euclidean distance between two series
@@ -60,7 +65,10 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 		double *distance)
 {
 	double *test;
+	double bsf = INFINITY;
+	double dist;
 	int current;
+	int neighbors = 0;
 
  	debug("Called nn1euclidean(PTR, PTR, %d, %d, %d, %e, PTR, PTR)\n", 
 			nseries, len, skipindex, epsilon); 
@@ -75,12 +83,26 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 	 */
 	current = 1;
 	while (current <= nseries) {
-		bestidx[current - 1] = euclidean2(test, needle, len);
+		dist = euclidean2(test, needle, len);
+		if (FLT_GT(bsf, dist, epsilon)) {
+			/* Distance to nearest neighbor got smaller
+			 */
+			bsf = dist;
+			bestidx[0] = current;
+			neighbors = 1;
+		}
+		else if (!FLT_GT(dist, bsf, epsilon)) {
+			/* Another instance just as far from the previous
+			 * neighbors
+			 */
+			bestidx[neighbors++] = current;
+		}
 		current++;
 		seekstack(test, stack, current, len);
 	}
 
-	return nseries;
+	*distance = bsf;
+	return neighbors;
 }
 
 void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
@@ -197,8 +219,8 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	*/
 	bestidx_large = malloc(sizeof (double) * nseries);
 	if (!bestidx_large) {
-/* 		debug("Could not allocate %zu bytes for %d neighbors\n", 
-				sizeof (double) * nseries, nseries);*/
+ 		debug("Could not allocate %zu bytes for %d neighbors\n", 
+				sizeof (double) * nseries, nseries);
 		mexErrMsgTxt("Error allocating memory\n");
 	}
 
@@ -217,10 +239,10 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	bestidx = mxGetPr(left[0]);
 	memcpy(bestidx, bestidx_large, sizeof (double) * numneighbors);
 
-	/* Make the second argument a dummy value
+	/* Make the second the distance to the nearest neighbor
 	 */
  	debug("Making second scalar\n");
-	left[1] = mxCreateDoubleScalar(1);
+	left[1] = mxCreateDoubleScalar(distance);
 	
 	end_debugger();
 }

@@ -48,9 +48,6 @@ end
 
 [bestidx, distance] = models.nn1_mex(stack', needle, skipindex, epsilon);
 
-bestidx'
-distance
-
 % If we got more than one nearest neighbor, we need to decide on one of
 % them, depending on the tie break strategy. Unless we are set to not
 % perform any tie break at all. In that case we just return what we got
