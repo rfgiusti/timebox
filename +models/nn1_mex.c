@@ -88,10 +88,18 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 	 */
 	current = 1;
 	while (current <= nseries) {
+		/* Allow in-loco classification
+		 */
+		if (current == skipindex) {
+			current++;
+			seekstack(test, stack, current, len);
+			continue;
+		}
+		
 		dist = euclidean2(test, needle, len, bsf, epsilon);
 		if (FLT_GT(bsf, dist, epsilon)) {
 			/* Distance to nearest neighbor got smaller
-			 */
+			*/
 			bsf = dist;
 			bestidx[0] = current;
 			neighbors = 1;
@@ -102,6 +110,7 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 			 */
 			bestidx[neighbors++] = current;
 		}
+		
 		current++;
 		seekstack(test, stack, current, len);
 	}
@@ -193,7 +202,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 				"elements as the first input");
 	}
 	needle = mxGetPr(right[1]);
- 	debug("Needle: ok\n"); 
+	debug("Needle: ok\n"); 
 
 	/* Third argument must be a scalar
 	*/
@@ -224,7 +233,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	*/
 	bestidx_large = malloc(sizeof (double) * nseries);
 	if (!bestidx_large) {
- 		debug("Could not allocate %zu bytes for %d neighbors\n", 
+		debug("Could not allocate %zu bytes for %d neighbors\n", 
 				sizeof (double) * nseries, nseries);
 		mexErrMsgTxt("Error allocating memory\n");
 	}
@@ -238,16 +247,16 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 			epsilon, bestidx_large, &distance);
 
 	/* Make the first argument the distances from the needle to all series
-	 */
- 	debug("Trying to allocate first output argument\n");
+	*/
+	debug("Trying to allocate first output argument\n");
 	left[0] = mxCreateDoubleMatrix(numneighbors, 1, mxREAL);
 	bestidx = mxGetPr(left[0]);
 	memcpy(bestidx, bestidx_large, sizeof (double) * numneighbors);
 
 	/* Make the second the distance to the nearest neighbor
-	 */
- 	debug("Making second scalar\n");
+	*/
+	debug("Making second scalar\n");
 	left[1] = mxCreateDoubleScalar(distance);
-	
+
 	end_debugger();
 }
