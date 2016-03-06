@@ -3,19 +3,17 @@
 TimeBox is a procedural library that implements data structures and functions for the evaluation
 of time series classification methods.
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
-compliance with the License. You may obtain a copy of the License at
+Except for third-party material included in this software, TimeBox is licensed under the Apache License,
+Version 2.0 (the "License"); you may not use TimeBox except in compliance with the License. You may
+obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
 This software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied.
 
-In essence, please feel free to copy, modify, and share this software, as long as you keep it licensed
-under "Apache License 2.0" and mantain any copyright/authorship/license notices that are currently present.
-If you make any substantial modifications to the source and would like to share them (*i.e.*, anything other
-than a small bugfix), please make sure the people you are sharing your modifications with understand that
-you are sharing a modified version of my software and they have been informed of the original source.
+Third-party material is included in this software in respect to their license terms, which are
+transcribed in THIRD-PARTY.txt. Please see those license terms before using this software.
 
 **Table of Contents**:
 
