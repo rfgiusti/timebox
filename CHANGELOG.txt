@@ -4,6 +4,11 @@ TimeBox Change Log
 TimeBox 0.11.7: predicted
 - Implements MODELS.NN1EUCLIDEAN for fast execution of 1-NN with
   Euclidean distance using early abandon.
+- When invoking RUNS.PARTITIONED or RUNS.LEAVEONEOUT without specifying
+  a distance function, TimeBox will assume the desired distance is the
+  Euclidean distance and will use the fast 1-NN version. To use the old
+  MODELS::NN, either explicitly specify a distance function or the
+  classification model in the option "runs::model".
 
 
 TimeBox 0.10.6: released 2016-Mar-04

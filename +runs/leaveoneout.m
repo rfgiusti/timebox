@@ -30,7 +30,15 @@ function [acc, neighbors, labels] = leaveoneout(ds, varargin)
 %   neighbors.
 %
 %   Options:
-%       runs::model         (default: @models.nn)
+%       runs::model     (default: *)
+%
+%   *the default value for "runs::model" is "@models::nn" if a distance
+%   function is specified as second argument; "@models::nn1euclidean"
+%   otherwise. Notice that @models::nn1euclidean, although much faster,
+%   requires input values to be of type DOUBLE, so if the input might
+%   contain complex numbers, either a distance function must be specified
+%   or the classification model must be explicitly specified.
+defaultmodel = @models.nn1euclidean;
 tb.narginchk(nargin, 1, 3);
 if nargin == 1
     options = opts.empty;
@@ -39,13 +47,17 @@ elseif nargin == 2
         options = varargin{1};
     else
         options = opts.empty;
+        % Since the second argument was not an OPTS object, we assume it is
+        % a handle to a distance function
+        defaultmodel = @models.nn;        
     end
 else
     tb.assert(~opts.isa(varargin{1}));
     tb.assert(opts.isa(varargin{2}));
     options = varargin{2};
+    defaultmodel = @models.nn;
 end
-classifyhandle = opts.get(options, 'runs::model', @models.nn);
+classifyhandle = opts.get(options, 'runs::model', defaultmodel);
 
 numinstances = size(ds, 1);
 labels = zeros(numinstances, 1);
