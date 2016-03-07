@@ -1,23 +1,40 @@
 function [acc, neighbors, labels] = leaveoneout(ds, varargin)
 %RUNS.LEAVEONEOUT Evaluate a data set with leave-one-out partitioning.
 %   LEAVONEOUT(DS) evaluates the data set DS with leave-one-out strategy
-%   and returns the estimated accuracy. The classification model is assumed
-%   to be the 1-NN classifier and Euclidean distance is used.
+%   and returns the estimated accuracy (i.e., percentage of instances
+%   correctly classified). The classification model is assumed to be the
+%   fast 1-NN classifier (MODELS.NN1EUCLIDEAN) and Euclidean distance is
+%   used.
+%
+%   Example:
+%
+%       [train,~] = ts.load('some data set');    % test data ignored
+%       runs.leaveoneout(train)
 %
 %   To use a custom classification model instead of the 1-NN classifier,
 %   set the option "runs::model" to a different function handle. It is
 %   important that the custom model is capable of taking at least the same
 %   mandatory arguments as MODELS.NN (i.e., the "stack" and the "needle").
-%   The optional arguments that MODELS.NN are only necessary for the the
-%   custom model if they are supplied to LEAVEONEOUT. The custom model
+%   The optional arguments that MODELS.NN accept are only necessary for the
+%   the custom model if they are supplied to LEAVEONEOUT. The custom model
 %   should output at least one argument, which must be an index to the
 %   nearest neighbor of the "needle" in the "stack". For an explanation of
 %   the "needle/stack" terminology, please see the internal documentation
 %   of MODELS.NN.
 %
+%   Example ("@myClassifier" should be a handle to a valid classifier)
+%
+%       [train,~] = ts.load('some data set');    % test data ignored
+%       runs.leaveoneout(train, opts.set('runs::model', @myClassifier))
+%
 %   LEAVEONEOUT(DS,DIST) does the same as the first call, but using DIST as
 %   a function handle to a distance function instead of the Euclidean
 %   distance.
+%
+%   Example:
+%
+%       [train,~] = ts.load('some data set');    % test data ignored
+%       runs.leaveoneout(train, @dists.DTW_Cpp)
 %
 %   LEAVEONEOUT(DS,OPTS) or
 %   LEAVEONEOUT(DS,DISTS,OPTS) do the same as the above variations, but

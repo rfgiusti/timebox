@@ -1,22 +1,25 @@
 function [acc, neighbors, classes] = dmnn(trainclasses, testclasses, distmatrix, options)
 %RUNS.DMNN Distance matrix-based partitioned/leave-one-out validation for
 %the 1-nearest neighbor classification model.
-%   DMNN(T,X,DM) performs a train/test partition validation on a data set
+%   DMNN(T,X,DM) performs a train/test-partition validation on a data set
 %   whose distances between test and training instances is specified by DM,
 %   which must be a matrix of n-by-m dimensions. T is an array of n
-%   elements which specifies the classes of the training. X is an array of
-%   m elements which specifies the test instances classes. The value
-%   returned by DMNN is the estimated accuracy.
+%   elements which specifies the classes of the training instances. X is an
+%   array of m elements which specifies the test instances classes. The
+%   value returned by DMNN is the estimated accuracy (i.e., percentage of
+%   test instances correctly classified).
 %
 %   DMNN(T,X,DM,OPTS) takes an OPTS object. If the distance function is
 %   actually a similarity function this must be specified as an option.
 %
-%   DMNN(T,[],DM,...) specifies leave-one-out validation. DM is a n-by-n
-%   matrix of distances between pairs on the same data set. T is an array
-%   of n elements for the classes of the training instances.
+%   DMNN(T,[],DM,...) specifies leave-one-out validation. In this case, DM
+%   is a n-by-n matrix of distances between pairs on the same data set. T
+%   is an array of n elements for the classes of the training instances.
 %
 %   [ACC,N] = DMNN(T,...) returns the indices of the nearest neighbors (in
-%   T) as well as the accuracy.
+%   T) as well as the accuracy. If a test instance has equal distance to
+%   more than one neighbor in the training set, the one with smallest index
+%   is chosen as neighbor.
 %
 %   [ACC,N,C] = DMNN(T,...) also returns the classes of the nearest
 %   neighbors.
