@@ -50,6 +50,21 @@ You can check the TimeBox version you are currently running by typing
 tb.version
 ```
 
+A few features require that some MEX files be compiled. This include the UCR Suite-based implementation of
+the Dynamic Time Warping in `timebox/+dists/DTW_mex.cpp`, the fast 1-NN classification model in 
+`timebox/+models/nn1_mex.c`, and the Atiya-based ensemble stragegy in `timebox/+runs/+dme/+aux/atiya_Mex.c`.
+Currently, those must be manually compiled, but this should change in the future. To compile a MEX file,
+a C and/or C++ compiler is required, and the procedure goes somewhat like this;
+
+```Matlab
+cd ~/timebox/+dists    % assuming TimeBox was installed into HOME 
+mex DTW_mex.cpp
+```
+
+On Linux, warnings about GCC version are probably harmless. If the compilation is successful, a file
+containing `.mex` as part of its extension will be generated. This file is system-dependent and should not
+be included in the repository.
+
 
 
 ## A word about data sets
