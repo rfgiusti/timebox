@@ -80,11 +80,11 @@ future.
 In the local repository, each data set shold be in a Matlab data file (`.mat`) with the same name as
 its directory. Each data set file should contain two variables: `train` and `test`, for the
 training and test samples, respectivelly. If your data set does not have labeled data for testing,
-the `test` variable should contain an empty array `[]`. Some features of TimeBox required labeled
+the `test` variable should contain an empty array `[]`. Some features of TimeBox require labeled
 data.
 
-The TS package contains functions for handling data sets. In particular TS.LOAD loads a data set
-from the TimeBox repository (and *only* from the TimeBox repository). Conversely, TS.SAVE saves a
+The `TS` package contains functions for handling data sets. In particular `TS.LOAD` loads a data set
+from the TimeBox repository (and *only* from the TimeBox repository). Conversely, `TS.SAVE` saves a
 data set into the TimeBox repository.
 
 As an example, a test data set may be found in `assets/dataset_example`. It contains two files,
@@ -100,7 +100,7 @@ ts.save(train, test, 'example');   % register into the repository
 
 Once the data set has been saved into the TimeBox repository, it should be referred to by its given
 name (in this case, `example`) every time a function needs to access the repository. For instance,
-the TS.LOAD function may be used to load the previously data set `example` as follows:
+the `TS.LOAD` function may be from now on used to load the previously data set `example` as follows:
 
 ```Matlab
 chdir('~/timebox');                % assuming TimeBox has been installed here
@@ -119,7 +119,7 @@ without cached data.
 
 ## A simple example
 
-The RUNS package contains functions to classify data sets. The function RUNS.PARTITIONED performs
+The RUNS package contains functions to classify data sets. The function `RUNS.PARTITIONED` performs
 a classification round on a partitioned data set (split into train/test data) and returns the
 observed accuracy. The default classification model is the 1-NN classifier.
 
@@ -135,11 +135,10 @@ The return value will be the observed accuracy for the 1-NN on the `example` dat
 
 There are several ways to change the classification model:
 
-- Using a different distance function (default is DISTS.EUCLIDEAN);
+- Using a different classification model (since TimeBox v0.11, the default is `MODELS.NN1EUCLIDEAN`);
+- Using a different distance function (default is Euclidean distance);
 - Using a different time series representation (data sets can be converted from the time domain
-  to other representations with TRANSFORM.* functions -- *e.g.*, TRANSFORM.PS);
-- Using a different classification model altogether (TimeBox currently only implements NN, but a
-  different model may be supplied to RUNS.PARTITIONED through a function handle).
+  to other representations with `TRANSFORM.*` functions -- *e.g.*, `TRANSFORM.PS`);
 
 TimeBox is under effort to be kept internally documented. Please check the internal documentation
 by typing `help FUNCTION-NAME` in the Matlab shell (*e.g.*, `help runs.leaveoneout`).
