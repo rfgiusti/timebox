@@ -5,7 +5,8 @@ function sharpshoot(Xa, Ya, Xe, Ye, varargin)
 %   SHARPSHOOT(Xa,Ya,Xe,Ye) produces a sharpshoot plot for the actual
 %   gain Xa/Ya versus the expected gain Xe/Ye. Each Xa, Ya, Xe, and Ye
 %   must be a cell array where each cell element is either a double or
-%   the  empty matrix [].
+%   the  empty matrix []. The function TB.LOADFILES loads cell arrays in
+%   format suitable to be used by this function.
 %
 %   Each Xa{i} stands for the actual value of X on the i-th experiment
 %   or population. Eacg Xe{i} stands for the expected value of X on the
