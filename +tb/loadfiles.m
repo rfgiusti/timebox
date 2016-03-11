@@ -3,16 +3,16 @@ function data = loadfiles(files, mask)
 %cell array
 %   data = LOADFILES(files), where `files' is a cell array of file
 %   names, returns in data{i} the contents of the i-th file. If files{i}
-%   is not found, then data{i} contains the empty matrix []
+%   is not found, then data{i} will contain the empty matrix [].
 %
 %   data = LOADFILES(files,mask) does the same, but each `file{i}' is
-%   used as argument to replace a '%s' in `mask'.
+%   used as argument to replace a '%s' in the CHAR `mask'.
 %
 %       Example:
 %
 %           % This example assumes there is one file in ~/results for
-%           each data set, each file named after the data set (i.e.,
-%           Coffee.txt, GunPoint.txt, etc)
+%           % each data set, each file named after the data set (e.g.,
+%           % Coffee.txt, GunPoint.txt, etc)
 %           dsnames = ts.getnames;
 %           data = loadfiles(dsnames, '~/results/%s.txt');
 %

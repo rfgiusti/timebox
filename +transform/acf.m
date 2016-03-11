@@ -1,10 +1,10 @@
 function [trainacf, testacf] = acf(train, test, ~)
 %TRANSFORM.ACF Time series transform to autocorrelation coefficients.
-%   DSA = ACF(DS) transform the time series data set DS into correlation
+%   DSA = ACF(DS) transforms the time series data set DS into correlation
 %   coefficients.
 %
-%   [TRAINA,TESTA] = ACF(TRAIN,TEST) converts both a training and a a test
-%   data set to correlation coefficients.
+%   [TRAINA,TESTA] = ACF(TRAIN,TEST) converts both a training and a test
+%   data sets into correlation coefficients.
 %
 %   For each series, the first coefficient p(0) is the autocorrelation
 %   between each original observation and itself. The second coefficient

@@ -1,7 +1,7 @@
 function [neighbor, distance, label, hit] = nn1euclidean(stack, needle, options)
 %MODELS.NN1EUCLIDEAN    Run the 1-Nearest Neighbor classification model
-%for a single instance on a data set using Euclidean distance. Has
-%similar behavior to MODELS.NN with @DISTS.EUCLIDEAN, but much faster.
+%for a single instance on a data set using Euclidean distance. Returns the
+%same results as MODELS.NN when using @DISTS.EUCLIDEAN, but much faster.
 %   NN(DS,S) where DS is an n-by-m matrix of double representing a data set
 %   (in format according to TS.LOAD and TS.SAVE) and S is a 1-by-m column
 %   vector of double representing a single instance returns the index of

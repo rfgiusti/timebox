@@ -1,17 +1,36 @@
 function [acc, indices, classes] = partitioned(train, test, varargin)
 %RUNS.PARTITIONED Run a classification model over a partitioned data set.
 %   ACC = PARTITIONED(TRAIN,TEST) tests each instance of the test data set
-%   on the training data set and return the estimated accuracy. Without
-%   further options, the classification model is the 1-NN classifier.
+%   on the training data set and return the estimated accuracy (i.e.,
+%   percentage of instances correctly classified). Without further options,
+%   the classification model is the fast 1-NN classifier
+%   MODELS.NN1EUCLIDEAN and the distance function is the Euclidean
+%   distance.
+%
+%   Example:
+%
+%       [train,test] = ts.load('some data set');
+%       runs.partitioned(train,test)
 %
 %   ACC = PARTITIONED(TRAIN,TEST,DIST) does the same as above, but the
 %   distance function is specified by DIST, which must be a function
 %   handle. The DIST argument may not be accepted by the classification
 %   model if this is not the nearest-neighbors classifier.
 %
+%   Example:
+%
+%       [train,test] = ts.load('some data set');
+%       runs.partitioned(train,test,@dists.DTW_Cpp)
+%
 %   ACC = PARTITIONED(TRAIN,TEST,OPTS) or
 %   ACC = PARTITIONED(TRAIN,TEST,DIST,OPTS) does the same as the two above,
 %   except that options are taken from OPTS instead of default values.
+%
+%   Example ("@myClassifier" should be a handle to a valid classifier)
+%
+%       [train,test] = ts.load('some data set');
+%       runs.partitioned(train,test, opts.set('runs::model', ...
+%                                           @myClassifier))
 %
 %   [ACC,IDX] = PARTITIONED(...) returns both the accuracy and an array of
 %   indices for the nearest neighbors. The array IDX may be empty if the

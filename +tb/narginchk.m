@@ -1,6 +1,6 @@
 function narginchk(numargs, minargs, maxargs)
-%TB.NARGINCHECK Sugar candy to check the number of input arguments
-%passed to a function
+%TB.NARGINCHECK Syntax sugar to check the number of input arguments passed
+%to a function.
 %  TB.NARGINCHK(NARGIN,a,b) raises a MATLAB exception if the number of
 %  arguments received by the caller does not fall in the interval [a,b].
 %  This function mimics the behavior of narginchk, which is not

@@ -36,4 +36,21 @@ including, without limitation, damages for loss of goodwill, work
 stoppage, computer failure or malfunction, or for any and all other
 damages or losses.
 
-If you do not agree with these terms, then you you are advised to not use the software.
+If you do not agree with these terms, then you you are advised to not
+use the software.
+
+
+-----------------------------------------------------------------------
+
+
++tb/hostname.m
+
+Shared via MathWorks File Exchange. No specific license provided.
+
+Copyright (C) 2007-2013 Manuel Marin
+
+In-code comments:
+
+% m j m a r i n j (AT) y a h o o (DOT) e s
+% (c) MJMJ/2007
+% MOD: MJMJ/2013
