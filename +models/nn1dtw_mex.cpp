@@ -1,7 +1,7 @@
 /* This file is part of TimeBox.
  * TimeBox is copyright protected (C) 2016 by Rafael Giusti
  *
- * This file is imported from the UCR Suite and is copyrighted by its authors.
+ * This is a modified version of the UCR Suite for use with TimeBox.
  * The UCR Suite copyright disclaimer is transcribed below.
  *
  * Please see THIRD-PARTY.txt for the UCR Suite license.
@@ -32,11 +32,12 @@
 /***********************************************************************/
 /***********************************************************************/
 
+#include "mex.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 #include <iostream>
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -387,16 +388,11 @@ void error(int id)
 }
 
 /// Main Function
-int main(int argc , char *argv[] )
+void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, double *q, int len, double r)
 {
-	FILE *fp;            /// data file pointer
-	FILE *qp;            /// query file pointer
-
 	double bsf;          /// best-so-far
-	double *q;       /// data array and query array
 	int *order;          ///new order of the query
 	double *u, *l, *qo, *uo, *lo,*cb, *cb1, *cb2,*u_d, *l_d;
-
 
 	double d;
 	long long i , j;
@@ -408,39 +404,7 @@ int main(int argc , char *argv[] )
 	double *series, *upper_lemire, *lower_lemire;
 	Index *Q_tmp;
 
-	/// If not enough input, display an error.
-	if (argc<=3)
-		error(4);
-
-	/// read size of the query
-	if (argc>3)
-		m = atol(argv[3]);
-
-	/// read warping windows
-	if (argc>4) {
-		double R = atof(argv[4]);
-		if (R<=1)
-			r = floor(R*m);
-		else
-			r = floor(R);
-	}
-
-	fp = fopen(argv[1],"r");
-	if( fp == NULL )
-		error(2);
-
-	qp = fopen(argv[2],"r");
-	if( qp == NULL )
-		error(2);
-
-	/// start the clock
-	t1 = clock();
-
-
 	/// malloc everything here
-	q = (double *)malloc(sizeof(double)*m);
-	if( q == NULL )
-		error(1);
 	qo = (double *)malloc(sizeof(double)*m);
 	if( qo == NULL )
 		error(1);
@@ -487,10 +451,6 @@ int main(int argc , char *argv[] )
 	if( l == NULL )
 		error(1);
 
-	series = (double *)malloc(sizeof(double)*m);
-	if( series == NULL )
-		error(1);
-
 	upper_lemire = (double *)malloc(sizeof(double)*m);
 	if( upper_lemire == NULL )
 		error(1);
@@ -500,15 +460,7 @@ int main(int argc , char *argv[] )
 		error(1);
 
 
-	/// Read query file
 	bsf = INF;
-	i = 0;
-
-	while(fscanf(qp,"%lf",&d) != EOF && i < m) {
-		q[i] = d;
-		i++;
-	}
-	fclose(qp);
 
 	/// Create envelop of the query: lower envelop, l, and upper envelop, u
 	lower_upper_lemire(q, m, r, l, u);
@@ -539,24 +491,15 @@ int main(int argc , char *argv[] )
 
 	int it=0, k=0;
 
+	//start with the first series
+	series = stack;
+
 	while(1) {
 		it++;
-
-		/// Read next series
-		for (k = 0; k < m; k++) {
-			if (fscanf(fp, "%lf", &d) == EOF) {
-				if (k) {
-					printf("ERROR: Last series was partially read\n");
-				}
-				goto endsearch;
-			}
-			series[k] = d;
-		}
 
 		lower_upper_lemire(series, m, r, lower_lemire, upper_lemire);
 
 		/// Use a constant lower bound to prune the obvious subsequence
-
 		lb_kim = lb_kim_hierarchy(series, q, 0, m, 0, 1, bsf);
 
 		if (lb_kim < bsf) {
@@ -588,19 +531,22 @@ int main(int argc , char *argv[] )
 						/// Update bsf
 						// loc is the index of the nearest neighbor
 						bsf = dist;
-						loc = it;
+						neighbor = it;
 					}
 				} else
-					keogh2++;
+					pruned++;
 			} else
-				keogh++;
+				pruned++;
 		} else
-			kim++;
+			pruned++;
+
+
+		// point to the next series in the data set
+		series += len;
 	}
 
 endsearch:
 	i = it;
-	fclose(fp);
 
 	free(q);
 	free(u);
@@ -616,20 +562,52 @@ endsearch:
 	free(lower_lemire);
 	free(upper_lemire);
 
-	t2 = clock();
-	printf("\n");
+	dist = sqrt(bsf);
+}
 
-	/// Note that loc and i are long long.
-	cout << "Location : " << loc << endl;
-	cout << "Distance : " << sqrt(bsf) << endl;
-	cout << "Data Scanned : " << i << endl;
-	cout << "Total Execution Time : " << (t2-t1)/CLOCKS_PER_SEC << " sec" << endl;
+void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right)
+{
+	int neighbor;
+	double distance;
+	int pruned;
 
-	/// printf is just easier for formating ;)
-	printf("\n");
-	printf("Pruned by LB_Kim    : %6.2f%%\n", ((double) kim / i)*100);
-	printf("Pruned by LB_Keogh  : %6.2f%%\n", ((double) keogh / i)*100);
-	printf("Pruned by LB_Keogh2 : %6.2f%%\n", ((double) keogh2 / i)*100);
-	printf("DTW Calculation     : %6.2f%%\n", 100-(((double)kim+keogh+keogh2)/i*100));
-	return 0;
+	double *stack;
+	double *needle;
+	int len;
+	int r;
+
+	if (nright != 4) {
+		mexErrMsgTxt("Three inputs expected\n");
+	}
+
+
+	/* First argument is the training data set: it must be a non-complex
+	 * matrix of double
+	 */
+	len = mxGetM(right[0]);
+	if (!mxIsDouble(right[0]) || mxIsComplex(right[0]) || len < 1) {
+		mexErrMsgTxt("First input argument (STACK) must be a "
+				"non-complex matrix of DOUBLE");
+	}
+	stack = mxGetPr(right[0]);
+
+	/* Second argument is the needle: it must be a non-complex row vector
+	 * with appropriate number of elements
+	 */
+	if (!mxIsDouble(right[1]) || mxIsComplex(right[1]) ||
+			mxGetNumberofElements(right[1] != len)) {
+		mexErrMsgTxt("Second input argument (NEEDLE) must be a "
+				"non-complex vector of DOUBLE with as many "
+				"elements as the number of observations in "
+				"the STACK");
+	}
+	needle = mxGetPr(right[1]);
+
+	/* Third argument is the Sakoe-Chiba window size
+	 */
+	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
+			mxGetNumberofElements(right[2]) != 1) {
+		mexErrMsgTxt("Third input argument (r) must be a non-complex "
+				"DOUBLE scalar");
+	}
 }
