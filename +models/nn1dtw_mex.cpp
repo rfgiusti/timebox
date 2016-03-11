@@ -387,29 +387,26 @@ void error(int id)
 }
 
 /// Main Function
-int main(  int argc , char *argv[] )
+int main(int argc , char *argv[] )
 {
 	FILE *fp;            /// data file pointer
 	FILE *qp;            /// query file pointer
+
 	double bsf;          /// best-so-far
-	double *t, *q;       /// data array and query array
+	double *q;       /// data array and query array
 	int *order;          ///new order of the query
-	double *u, *l, *qo, *uo, *lo,*tz,*cb, *cb1, *cb2,*u_d, *l_d;
+	double *u, *l, *qo, *uo, *lo,*cb, *cb1, *cb2,*u_d, *l_d;
 
 
 	double d;
 	long long i , j;
-	double ex , ex2 , mean, std;
 	int m=-1, r=-1;
 	long long loc = 0;
 	double t1,t2;
 	int kim = 0,keogh = 0, keogh2 = 0;
 	double dist=0, lb_kim=0, lb_k=0, lb_k2=0;
-	double *buffer, *u_buff, *l_buff;
+	double *series, *upper_lemire, *lower_lemire;
 	Index *Q_tmp;
-
-	/// For every EPOCH points, all cummulative values, such as ex (sum), ex2 (sum square), will be restarted for reducing the floating point error.
-	int EPOCH = 100000;
 
 	/// If not enough input, display an error.
 	if (argc<=3)
@@ -490,47 +487,28 @@ int main(  int argc , char *argv[] )
 	if( l == NULL )
 		error(1);
 
-	t = (double *)malloc(sizeof(double)*m*2);
-	if( t == NULL )
+	series = (double *)malloc(sizeof(double)*m);
+	if( series == NULL )
 		error(1);
 
-	tz = (double *)malloc(sizeof(double)*m);
-	if( tz == NULL )
+	upper_lemire = (double *)malloc(sizeof(double)*m);
+	if( upper_lemire == NULL )
 		error(1);
 
-	buffer = (double *)malloc(sizeof(double)*EPOCH);
-	if( buffer == NULL )
-		error(1);
-
-	u_buff = (double *)malloc(sizeof(double)*EPOCH);
-	if( u_buff == NULL )
-		error(1);
-
-	l_buff = (double *)malloc(sizeof(double)*EPOCH);
-	if( l_buff == NULL )
+	lower_lemire = (double *)malloc(sizeof(double)*m);
+	if( lower_lemire == NULL )
 		error(1);
 
 
 	/// Read query file
 	bsf = INF;
 	i = 0;
-	j = 0;
-	ex = ex2 = 0;
 
 	while(fscanf(qp,"%lf",&d) != EOF && i < m) {
-		ex += d;
-		ex2 += d*d;
 		q[i] = d;
 		i++;
 	}
 	fclose(qp);
-
-	/// Do z-normalize the query, keep in same array, q
-	mean = ex/m;
-	std = ex2/m;
-	std = sqrt(std-mean*mean);
-	for( i = 0 ; i < m ; i++ )
-		q[i] = (q[i] - mean)/std;
 
 	/// Create envelop of the query: lower envelop, l, and upper envelop, u
 	lower_upper_lemire(q, m, r, l, u);
@@ -559,137 +537,69 @@ int main(  int argc , char *argv[] )
 		cb2[i]=0;
 	}
 
-	i = 0;          /// current index of the data in current chunk of size EPOCH
-	j = 0;          /// the starting index of the data in the circular array, t
-	ex = ex2 = 0;
-	bool done = false;
-	int it=0, ep=0, k=0;
-	long long I;    /// the starting index of the data in current chunk of size EPOCH
+	int it=0, k=0;
 
-	while(!done) {
-		/// Read first m-1 points
-		ep=0;
-		if (it==0) {
-			for(k=0; k<m-1; k++)
-				if (fscanf(fp,"%lf",&d) != EOF)
-					buffer[k] = d;
-		}
-		else {
-			for(k=0; k<m-1; k++)
-				buffer[k] = buffer[EPOCH-m+1+k];
-		}
+	while(1) {
+		it++;
 
-		/// Read buffer of size EPOCH or when all data has been read.
-		ep=m-1;
-		while(ep<EPOCH) {
-			if (fscanf(fp,"%lf",&d) == EOF)
-				break;
-			buffer[ep] = d;
-			ep++;
-		}
-
-		/// Data are read in chunk of size EPOCH.
-		/// When there is nothing to read, the loop is end.
-		if (ep<=m-1) {
-			done = true;
-		}
-		else {
-			lower_upper_lemire(buffer, ep, r, l_buff, u_buff);
-
-			/// Just for printing a dot for approximate a million point. Not much accurate.
-			if (it%(1000000/(EPOCH-m+1))==0)
-				fprintf(stderr,".");
-
-			/// Do main task here..
-			ex=0; ex2=0;
-			for(i=0; i<ep; i++) {
-				/// A bunch of data has been read and pick one of them at a time to use
-				d = buffer[i];
-
-				/// Calcualte sum and sum square
-				ex += d;
-				ex2 += d*d;
-
-				/// t is a circular array for keeping current data
-				t[i%m] = d;
-
-				/// Double the size for avoiding using modulo "%" operator
-				t[(i%m)+m] = d;
-
-				/// Start the task when there are more than m-1 points in the current chunk
-				if( i >= m-1 ) {
-					mean = ex/m;
-					std = ex2/m;
-					std = sqrt(std-mean*mean);
-
-					/// compute the start location of the data in the current circular array, t
-					j = (i+1)%m;
-					/// the start location of the data in the current chunk
-					I = i-(m-1);
-
-					/// Use a constant lower bound to prune the obvious subsequence
-					lb_kim = lb_kim_hierarchy(t, q, j, m, mean, std, bsf);
-
-					if (lb_kim < bsf) {
-						/// Use a linear time lower bound to prune; z_normalization of t will be computed on the fly.
-						/// uo, lo are envelop of the query.
-						lb_k = lb_keogh_cumulative(order, t, uo, lo, cb1, j, m, mean, std, bsf);
-						if (lb_k < bsf) {
-							/// Take another linear time to compute z_normalization of t.
-							/// Note that for better optimization, this can merge to the previous function.
-							for(k=0;k<m;k++) {
-								tz[k] = (t[(k+j)] - mean)/std;
-							}
-
-							/// Use another lb_keogh to prune
-							/// qo is the sorted query. tz is unsorted z_normalized data.
-							/// l_buff, u_buff are big envelop for all data in this chunk
-							lb_k2 = lb_keogh_data_cumulative(order, tz, qo, cb2, l_buff+I, u_buff+I, m, mean, std, bsf);
-							if (lb_k2 < bsf) {
-								/// Choose better lower bound between lb_keogh and lb_keogh2 to be used in early abandoning DTW
-								/// Note that cb and cb2 will be cumulative summed here.
-								if (lb_k > lb_k2) {
-									cb[m-1]=cb1[m-1];
-									for(k=m-2; k>=0; k--)
-										cb[k] = cb[k+1]+cb1[k];
-								}
-								else {
-									cb[m-1]=cb2[m-1];
-									for(k=m-2; k>=0; k--)
-										cb[k] = cb[k+1]+cb2[k];
-								}
-
-								/// Compute DTW and early abandoning if possible
-								dist = dtw(tz, q, cb, m, r, bsf);
-
-								if( dist < bsf ) {
-									/// Update bsf
-									/// loc is the real starting location of the nearest neighbor in the file
-									bsf = dist;
-									loc = (it)*(EPOCH-m+1) + i-m+1;
-								}
-							} else
-								keogh2++;
-						} else
-							keogh++;
-					} else
-						kim++;
-
-					/// Reduce obsolute points from sum and sum square
-					ex -= t[j];
-					ex2 -= t[j]*t[j];
+		/// Read next series
+		for (k = 0; k < m; k++) {
+			if (fscanf(fp, "%lf", &d) == EOF) {
+				if (k) {
+					printf("ERROR: Last series was partially read\n");
 				}
+				goto endsearch;
 			}
-
-			/// If the size of last chunk is less then EPOCH, then no more data and terminate.
-			if (ep<EPOCH)
-				done=true;
-			else
-				it++;
+			series[k] = d;
 		}
+
+		lower_upper_lemire(series, m, r, lower_lemire, upper_lemire);
+
+		/// Use a constant lower bound to prune the obvious subsequence
+
+		lb_kim = lb_kim_hierarchy(series, q, 0, m, 0, 1, bsf);
+
+		if (lb_kim < bsf) {
+			/// Use a linear time lower bound to prune
+			/// uo, lo are envelop of the query.
+			lb_k = lb_keogh_cumulative(order, series, uo, lo, cb1, 0, m, 0, 1, bsf);
+			if (lb_k < bsf) {
+				/// Use another lb_keogh to prune
+				/// qo is the sorted query. tz is unsorted z_normalized data.
+				lb_k2 = lb_keogh_data_cumulative(order, series, qo, cb2, lower_lemire, upper_lemire, m, 0, 1, bsf);
+				if (lb_k2 < bsf) {
+					/// Choose better lower bound between lb_keogh and lb_keogh2 to be used in early abandoning DTW
+					/// Note that cb and cb2 will be cumulative summed here.
+					if (lb_k > lb_k2) {
+						cb[m-1]=cb1[m-1];
+						for(k=m-2; k>=0; k--)
+							cb[k] = cb[k+1]+cb1[k];
+					}
+					else {
+						cb[m-1]=cb2[m-1];
+						for(k=m-2; k>=0; k--)
+							cb[k] = cb[k+1]+cb2[k];
+					}
+
+					/// Compute DTW and early abandoning if possible
+					dist = dtw(series, q, cb, m, r, bsf);
+
+					if( dist < bsf ) {
+						/// Update bsf
+						// loc is the index of the nearest neighbor
+						bsf = dist;
+						loc = it;
+					}
+				} else
+					keogh2++;
+			} else
+				keogh++;
+		} else
+			kim++;
 	}
 
-	i = (it)*(EPOCH-m+1) + ep;
+endsearch:
+	i = it;
 	fclose(fp);
 
 	free(q);
@@ -701,12 +611,10 @@ int main(  int argc , char *argv[] )
 	free(cb);
 	free(cb1);
 	free(cb2);
-	free(tz);
-	free(t);
 	free(l_d);
 	free(u_d);
-	free(l_buff);
-	free(u_buff);
+	free(lower_lemire);
+	free(upper_lemire);
 
 	t2 = clock();
 	printf("\n");
