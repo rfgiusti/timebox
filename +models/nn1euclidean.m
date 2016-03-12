@@ -2,29 +2,25 @@ function [neighbor, distance, label, hit] = nn1euclidean(stack, needle, options)
 %MODELS.NN1EUCLIDEAN    Run the 1-Nearest Neighbor classification model
 %for a single instance on a data set using Euclidean distance. Has
 %similar behavior to MODELS.NN with @DISTS.EUCLIDEAN, but much faster.
-%   NN(DS,S) where DS is an n-by-m matrix of double representing a data set
-%   (in format according to TS.LOAD and TS.SAVE) and S is a 1-by-m column
-%   vector of double representing a single instance returns the index of
-%   the nearest neighbor of S in DS.
+%   NN1EUCLIDEAN(DS,S) where DS is an n-by-m matrix of double representing
+%   a data set (in format according to TS.LOAD and TS.SAVE) and S is a
+%   1-by-m column vector of double representing a single instance returns
+%   the index of the nearest neighbor of S in DS.
 %
-%   NN(DS,S) where DS is an n-by-m matrix of double and S is a scalar
-%   returns the index of the nearest neighbor of the S-th instance of DS in
-%   DS.
-%
-%   NN(DS,S,options) does the same as explained above, however options
-%   are taken from "options", which must be a valid OPTS object as
+%   NN1EUCLIDEAN(DS,S,options) does the same as explained above, however
+%   options are taken from "options", which must be a valid OPTS object as 
 %   returned by OPTS.BUILD or OPTS.SET. If options are missing or no
 %   OPTS object is supplied, default values are used whenever required.
 %
-%   [N,P] = NN(DS,S,...) returns the index of the nearest neighbor and the
-%   distance from the test sample to the nearest neighbor.
+%   [N,P] = NN1EUCLIDEAN(DS,S,...) returns the index of the nearest
+%   neighbor and the distance from the test sample to the nearest neighbor.
 %
-%   [N,P,C] = NN(DS,S,...) returns the same as above, and also a label for
-%   the class of the nearest neighbor.
+%   [N,P,C] = NN1EUCLIDEAN(DS,S,...) returns the same as above, and also a
+%   label for the class of the nearest neighbor.
 %
-%   [N,P,C,H] = NN(DS,S, ...) returns the same as above, and also a flag
-%   indicating if the nearest neighbor belongs to the same class as the
-%   test sample (1 or 0).
+%   [N,P,C,H] = NN1EUCLIDEAN(DS,S, ...) returns the same as above, and also
+%   a flag indicating if the nearest neighbor belongs to the same class as
+%   the test sample (1 or 0).
 %
 %   Options:
 %       nn::tie break       (default: 'first')
