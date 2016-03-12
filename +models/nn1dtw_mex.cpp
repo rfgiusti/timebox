@@ -397,7 +397,8 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 }
 
 /// Main Function
-void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack, double *q, int numseries, int len, int r)
+void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack,
+		double *q, int skipindex, int numseries, int len, int r)
 {
 	double bsf;          /// best-so-far
 	int *order;          ///new order of the query
@@ -460,6 +461,13 @@ void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack, doub
 	series = stack;
 
 	for (int n = 1; n <= numseries; n++) {
+		if (n == skipindex) {
+			// This is the test sample in-loco and should be skipped
+			// point to the next series in the data set
+			series += len;
+			continue;
+		}
+
 		lower_upper_lemire(series, len, r, lower_lemire, upper_lemire);
 
 		/// Use a constant lower bound to prune the obvious subsequence
@@ -517,6 +525,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	double *stack;
 	double *needle;
 	int numseries, len;
+	int skipindex;
 	int r;
 
 	start_debugger();
@@ -548,12 +557,22 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	}
 	needle = mxGetPr(right[1]);
 
-	/* Third argument is the Sakoe-Chiba window size
-	*/
+	/* Third argument is the skipindex controller
+	 */
 	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
-			mxGetNumberOfElements(right[2]) != 1 ||
-			(r = mxGetScalar(right[2])) < 0) {
-		mexErrMsgTxt("Third input argument (r) must be a non-complex, "
+			mxGetNumberOfElements(right[2]) != 1) {
+		mexErrMsgTxt("Third input argument (SKIPINDEX) must be a "
+				"non-complex DOUBLE scalar (integer value "
+				"expected)");
+	}
+	skipindex = mxGetScalar(right[2]);
+
+	/* Fourth argument is the Sakoe-Chiba window size
+	 */
+	if (!mxIsDouble(right[3]) || mxIsComplex(right[3]) ||
+			mxGetNumberOfElements(right[3]) != 1 ||
+			(r = mxGetScalar(right[3])) < 0) {
+		mexErrMsgTxt("Fourth input argument (r) must be a non-complex, "
 				"non-negative DOUBLE scalar (integer value "
 				"expected)");
 	}
@@ -561,19 +580,19 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	debug("Got dataset with %d series of length %d\n", numseries, len);
 	debug("Running 1-NNDTW with Sakoe-Chiba window of width %d\n", r);
 	debug("Calling ucrsuite_main()\n");
-	ucrsuite_main(neighbor, distance, pruned, stack, needle, numseries,
-			len, r);
+	ucrsuite_main(neighbor, distance, pruned, stack, needle, skipindex,
+			numseries, len, r);
 	debug("Returned from ucrsuite_main()\n");
 
 	/* First output is the index of the nearest neighbor
-	*/
+	 */
 	if (nleft >= 1) {
 		debug("Creating first output\n");
 		left[0] = mxCreateDoubleScalar(neighbor);
 	}
 
 	/* Second output is the distance to the nearest neighbor
-	*/
+	 */
 	if (nleft >= 2) {
 		debug("Creating second output\n");
 		left[1] = mxCreateDoubleScalar(distance);
