@@ -34,6 +34,7 @@
 
 #include "mex.h"
 
+#include <cstdlib>
 #include <cmath>
 
 #define min(x,y) ((x)<(y)?(x):(y))
@@ -47,6 +48,38 @@
 } while (0)
 
 using namespace std;
+
+#define DEBUG 1
+
+#if DEBUG
+#include <cstdio>
+#define DEBUG_PATH "/tmp/timebox-nn1dtw_mex-debug.txt"
+FILE *__debug_file = NULL;
+#define debug(...) do { \
+	fprintf(__debug_file, __VA_ARGS__); \
+	fflush(__debug_file); \
+} while (0)
+#define start_debugger() do { \
+	if (!(__debug_file = fopen(DEBUG_PATH, "w"))) { \
+		mexErrMsgTxt("Can't open debug log at " DEBUG_PATH ". If " \
+				"is not required, please disable DEBUG and " \
+				"recompile this mex file."); \
+	} \
+} while (0)
+#define end_debugger() do { \
+	if (__debug_file) fclose(__debug_file); \
+} while (0)
+#define mexErrMsgTxt(...) do { \
+	end_debugger(); \
+	mexErrMsgTxt(__VA_ARGS__); \
+} while (0)
+#else
+/* No debugging
+ * */
+#define debug(...) do { } while (0)
+#define start_debugger() do { } while (0)
+#define end_debugger() do { } while (0)
+#endif
 
 /// Data structure for sorting the query
 typedef struct Index {
@@ -83,7 +116,7 @@ void init(deque *d, int capacity)
 /// Destroy the queue
 void destroy(deque *d)
 {
-	free(d->dq);
+	mxFree(d->dq);
 }
 
 /// Insert to the queue at the back
@@ -187,18 +220,19 @@ void lower_upper_lemire(double *t, int len, int r, double *l, double *u)
 /// However, because of z-normalization the top and bottom cannot give siginifant benefits.
 /// And using the first and last points can be computed in constant time.
 /// The prunning power of LB_Kim is non-trivial, especially when the query is not long, say in length 128.
-double lb_kim_hierarchy(double *t, double *q, int j, int len, double mean, double std, double bsf = INF)
+double lb_kim_hierarchy(double *t, double *q, int len, double bsf = INF)
 {
-	/// 1 point at front and back
 	double d, lb;
-	double x0 = (t[j] - mean) / std;
-	double y0 = (t[(len-1+j)] - mean) / std;
+
+	/// 1 point at front and back
+	double x0 = t[0];
+	double y0 = t[len - 1];
 	lb = dist(x0,q[0]) + dist(y0,q[len-1]);
 	if (lb >= bsf)
 		return lb;
 
 	/// 2 points at front
-	double x1 = (t[(j+1)] - mean) / std;
+	double x1 = t[1];
 	d = min(dist(x1,q[0]), dist(x0,q[1]));
 	d = min(d, dist(x1,q[1]));
 	lb += d;
@@ -206,7 +240,7 @@ double lb_kim_hierarchy(double *t, double *q, int j, int len, double mean, doubl
 		return lb;
 
 	/// 2 points at back
-	double y1 = (t[(len-2+j)] - mean) / std;
+	double y1 = t[len -2];
 	d = min(dist(y1,q[len-1]), dist(y0, q[len-2]) );
 	d = min(d, dist(y1,q[len-2]));
 	lb += d;
@@ -214,7 +248,7 @@ double lb_kim_hierarchy(double *t, double *q, int j, int len, double mean, doubl
 		return lb;
 
 	/// 3 points at front
-	double x2 = (t[(j+2)] - mean) / std;
+	double x2 = t[2];
 	d = min(dist(x0,q[2]), dist(x1, q[2]));
 	d = min(d, dist(x2,q[2]));
 	d = min(d, dist(x2,q[1]));
@@ -224,7 +258,7 @@ double lb_kim_hierarchy(double *t, double *q, int j, int len, double mean, doubl
 		return lb;
 
 	/// 3 points at back
-	double y2 = (t[(len-3+j)] - mean) / std;
+	double y2 = t[len - 3];
 	d = min(dist(y0,q[len-3]), dist(y1, q[len-3]));
 	d = min(d, dist(y2,q[len-3]));
 	d = min(d, dist(y2,q[len-2]));
@@ -241,15 +275,14 @@ double lb_kim_hierarchy(double *t, double *q, int j, int len, double mean, doubl
 /// order : sorted indices for the query.
 /// uo, lo: upper and lower envelops for the query, which already sorted.
 /// t     : a circular array keeping the current data.
-/// j     : index of the starting location in t
 /// cb    : (output) current bound at each position. It will be used later for early abandoning in DTW.
-double lb_keogh_cumulative(int* order, double *t, double *uo, double *lo, double *cb, int j, int len, double mean, double std, double best_so_far = INF)
+double lb_keogh_cumulative(int* order, double *t, double *uo, double *lo, double *cb, int len, double best_so_far = INF)
 {
 	double lb = 0;
 	double x, d;
 
 	for (int i = 0; i < len && lb < best_so_far; i++) {
-		x = (t[(order[i]+j)] - mean) / std;
+		x = t[order[i]];
 		d = 0;
 		if (x > uo[i])
 			d = dist(x,uo[i]);
@@ -269,14 +302,14 @@ double lb_keogh_cumulative(int* order, double *t, double *uo, double *lo, double
 /// qo: sorted query
 /// cb: (output) current bound at each position. Used later for early abandoning in DTW.
 /// l,u: lower and upper envelop of the current data
-double lb_keogh_data_cumulative(int* order, double *tz, double *qo, double *cb, double *l, double *u, int len, double mean, double std, double best_so_far = INF)
+double lb_keogh_data_cumulative(int* order, double *tz, double *qo, double *cb, double *l, double *u, int len, double best_so_far = INF)
 {
 	double lb = 0;
 	double uu,ll,d;
 
 	for (int i = 0; i < len && lb < best_so_far; i++) {
-		uu = (u[order[i]]-mean)/std;
-		ll = (l[order[i]]-mean)/std;
+		uu = u[order[i]];
+		ll = l[order[i]];
 		d = 0;
 		if (qo[i] > uu)
 			d = dist(qo[i], uu);
@@ -297,6 +330,7 @@ double lb_keogh_data_cumulative(int* order, double *tz, double *qo, double *cb, 
 double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 {
 
+
 	double *cost;
 	double *cost_prev;
 	double *cost_tmp;
@@ -308,7 +342,7 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 	for(k=0; k<2*r+1; k++)
 		cost[k]=INF;
 
-	mkarray(cost_prev, 2 * + 1, double);
+	mkarray(cost_prev, 2 * r + 1, double);
 	for(k=0; k<2*r+1; k++)
 		cost_prev[k]=INF;
 
@@ -343,8 +377,8 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 
 		/// We can abandon early if the current cummulative distace with lower bound together are larger than bsf
 		if (i+r < m-1 && min_cost + cb[i+r+1] >= bsf) {
-			free(cost);
-			free(cost_prev);
+			//mxFree(cost);
+			//mxFree(cost_prev);
 			return min_cost + cb[i+r+1];
 		}
 
@@ -357,8 +391,8 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 
 	/// the DTW distance is in the last cell in the matrix of size O(m^2) or at the middle of our array.
 	double final_dtw = cost_prev[k];
-	mxFree(cost);
-	mxFree(cost_prev);
+	//mxFree(cost);
+	//mxFree(cost_prev);
 	return final_dtw;
 }
 
@@ -374,6 +408,7 @@ void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, 
 	double *series, *upper_lemire, *lower_lemire;
 	Index *Q_tmp;
 
+	debug("ucrsuite_main(): allocating stuff\n");
 	mkarray(qo, len, double);
 	mkarray(uo, len, double);
 	mkarray(lo, len, double);
@@ -386,11 +421,14 @@ void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, 
 	mkarray(cb2, len, double);
 	mkarray(upper_lemire, len, double);
 	mkarray(lower_lemire, len, double);
+	debug("ucrsuite_main(): stuff allocated\n");
 
 	bsf = INF;
 
 	/// Create envelop of the query: lower envelop, l, and upper envelop, u
+	debug("ucrsuite_main(): creating enevelope for query\n");
 	lower_upper_lemire(q, len, r, l, u);
+	debug("ucrsuite_main(): envelope created\n");
 
 	/// Sort the query one time by abs(z-norm(q[i]))
 	for( i = 0; i<len; i++) {
@@ -407,7 +445,7 @@ void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, 
 		uo[i] = u[o];
 		lo[i] = l[o];
 	}
-	free(Q_tmp);
+	mxFree(Q_tmp);
 
 	/// Initial the cummulative lower bound
 	for( i=0; i<len; i++) {
@@ -425,16 +463,16 @@ void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, 
 		lower_upper_lemire(series, len, r, lower_lemire, upper_lemire);
 
 		/// Use a constant lower bound to prune the obvious subsequence
-		lb_kim = lb_kim_hierarchy(series, q, 0, len, 0, 1, bsf);
+		lb_kim = lb_kim_hierarchy(series, q, len, bsf);
 
 		if (lb_kim < bsf) {
 			/// Use a linear time lower bound to prune
 			/// uo, lo are envelop of the query.
-			lb_k = lb_keogh_cumulative(order, series, uo, lo, cb1, 0, len, 0, 1, bsf);
+			lb_k = lb_keogh_cumulative(order, series, uo, lo, cb1, len, bsf);
 			if (lb_k < bsf) {
 				/// Use another lb_keogh to prune
 				/// qo is the sorted query. tz is unsorted z_normalized data.
-				lb_k2 = lb_keogh_data_cumulative(order, series, qo, cb2, lower_lemire, upper_lemire, len, 0, 1, bsf);
+				lb_k2 = lb_keogh_data_cumulative(order, series, qo, cb2, lower_lemire, upper_lemire, len, bsf);
 				if (lb_k2 < bsf) {
 					/// Choose better lower bound between lb_keogh and lb_keogh2 to be used in early abandoning DTW
 					/// Note that cb and cb2 will be cumulative summed here.
@@ -481,6 +519,8 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	int numseries, len;
 	int r;
 
+	start_debugger();
+
 	if (nright != 3) {
 		mexErrMsgTxt("Three inputs expected\n");
 	}
@@ -509,26 +549,32 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	needle = mxGetPr(right[1]);
 
 	/* Third argument is the Sakoe-Chiba window size
-	 */
+	*/
 	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
-			mxGetNumberOfElements(right[2]) != 1) {
-		mexErrMsgTxt("Third input argument (r) must be a non-complex "
-				"DOUBLE scalar");
-	}
-	r = mxGetScalar(right[2]);
+			mxGetNumberOfElements(right[2]) != 1 ||
+			(r = mxGetScalar(right[2]) < 0)) {
+		mexErrMsgTxt("Third input argument (r) must be a non-complex, "
+				"non-negative DOUBLE scalar (integer value "
+				"expected)");
 
+	}
+
+	debug("Calling ucrsuite_main()\n");
 	ucrsuite_main(neighbor, distance, pruned, stack, needle, numseries,
 			len, r);
+	debug("Returned from ucrsuite_main()\n");
 
 	/* First output is the index of the nearest neighbor
-	 */
+	*/
 	if (nleft >= 1) {
+		debug("Creating first output\n");
 		left[0] = mxCreateDoubleScalar(neighbor);
 	}
 
 	/* Second output is the distance to the nearest neighbor
-	 */
+	*/
 	if (nleft >= 2) {
+		debug("Creating second output\n");
 		left[1] = mxCreateDoubleScalar(distance);
 	}
 
@@ -536,6 +582,10 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	 * early abandoning strategies
 	 */
 	if (nleft >= 3) {
+		debug("Creating third output\n");
 		left[2] = mxCreateDoubleScalar(pruned);
 	}
+
+	debug("Ending the debugger\n");
+	end_debugger();
 }
