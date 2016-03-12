@@ -34,17 +34,17 @@
 
 #include "mex.h"
 
-#include <cstdio>
-#include <cstdlib>
 #include <cmath>
-#include <ctime>
-#include <iostream>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 #define dist(x,y) ((x-y)*(x-y))
 
 #define INF 1e20       //Pseudo Infitinte number for this code
+
+#define mkarray(_OBJ, _SIZE, _TYPE) do { \
+	_OBJ = (_TYPE*)mxCalloc(_SIZE, sizeof (_TYPE)); \
+} while (0)
 
 using namespace std;
 
@@ -75,7 +75,7 @@ void init(deque *d, int capacity)
 {
 	d->capacity = capacity;
 	d->size = 0;
-	d->dq = (int *) malloc(sizeof(int)*d->capacity);
+	mkarray(d->dq, d->capacity, int);
 	d->f = 0;
 	d->r = d->capacity-1;
 }
@@ -304,11 +304,11 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 	double x,y,z,min_cost;
 
 	/// Instead of using matrix of size O(m^2) or O(mr), we will reuse two array of size O(r).
-	cost = (double*)malloc(sizeof(double)*(2*r+1));
+	mkarray(cost, 2 * r + 1, double);
 	for(k=0; k<2*r+1; k++)
 		cost[k]=INF;
 
-	cost_prev = (double*)malloc(sizeof(double)*(2*r+1));
+	mkarray(cost_prev, 2 * + 1, double);
 	for(k=0; k<2*r+1; k++)
 		cost_prev[k]=INF;
 
@@ -357,123 +357,50 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 
 	/// the DTW distance is in the last cell in the matrix of size O(m^2) or at the middle of our array.
 	double final_dtw = cost_prev[k];
-	free(cost);
-	free(cost_prev);
+	mxFree(cost);
+	mxFree(cost_prev);
 	return final_dtw;
 }
 
-/// Print function for debugging
-void printArray(double *x, int len)
-{
-	for(int i=0; i<len; i++)
-		printf(" %6.2lf",x[i]);
-	printf("\n");
-}
-
-/// If expected error happens, teminated the program.
-void error(int id)
-{
-	if(id==1)
-		printf("ERROR : Memory can't be allocated!!!\n\n");
-	else if ( id == 2 )
-		printf("ERROR : File not Found!!!\n\n");
-	else if ( id == 3 )
-		printf("ERROR : Can't create Output File!!!\n\n");
-	else if ( id == 4 ) {
-		printf("ERROR : Invalid Number of Arguments!!!\n");
-		printf("Command Usage:  UCR_DTW.exe  data-file  query-file   m   R\n\n");
-		printf("For example  :  UCR_DTW.exe  data.txt   query.txt   128  0.05\n");
-	}
-	exit(1);
-}
-
 /// Main Function
-void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, double *q, int len, double r)
+void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, double *q, int numseries, int len, int r)
 {
 	double bsf;          /// best-so-far
 	int *order;          ///new order of the query
-	double *u, *l, *qo, *uo, *lo,*cb, *cb1, *cb2,*u_d, *l_d;
+	double *u, *l, *qo, *uo, *lo,*cb, *cb1, *cb2;
 
-	double d;
-	long long i , j;
-	int m=-1, r=-1;
-	long long loc = 0;
-	double t1,t2;
-	int kim = 0,keogh = 0, keogh2 = 0;
+	long long i;
 	double dist=0, lb_kim=0, lb_k=0, lb_k2=0;
 	double *series, *upper_lemire, *lower_lemire;
 	Index *Q_tmp;
 
-	/// malloc everything here
-	qo = (double *)malloc(sizeof(double)*m);
-	if( qo == NULL )
-		error(1);
-	uo = (double *)malloc(sizeof(double)*m);
-	if( uo == NULL )
-		error(1);
-	lo = (double *)malloc(sizeof(double)*m);
-	if( lo == NULL )
-		error(1);
-
-	order = (int *)malloc(sizeof(int)*m);
-	if( order == NULL )
-		error(1);
-
-	Q_tmp = (Index *)malloc(sizeof(Index)*m);
-	if( Q_tmp == NULL )
-		error(1);
-
-	u = (double *)malloc(sizeof(double)*m);
-	if( u == NULL )
-		error(1);
-
-	l = (double *)malloc(sizeof(double)*m);
-	if( l == NULL )
-		error(1);
-
-	cb = (double *)malloc(sizeof(double)*m);
-	if( cb == NULL )
-		error(1);
-
-	cb1 = (double *)malloc(sizeof(double)*m);
-	if( cb1 == NULL )
-		error(1);
-
-	cb2 = (double *)malloc(sizeof(double)*m);
-	if( cb2 == NULL )
-		error(1);
-
-	u_d = (double *)malloc(sizeof(double)*m);
-	if( u == NULL )
-		error(1);
-
-	l_d = (double *)malloc(sizeof(double)*m);
-	if( l == NULL )
-		error(1);
-
-	upper_lemire = (double *)malloc(sizeof(double)*m);
-	if( upper_lemire == NULL )
-		error(1);
-
-	lower_lemire = (double *)malloc(sizeof(double)*m);
-	if( lower_lemire == NULL )
-		error(1);
-
+	mkarray(qo, len, double);
+	mkarray(uo, len, double);
+	mkarray(lo, len, double);
+	mkarray(order, len, int);
+	mkarray(Q_tmp, len, Index);
+	mkarray(u, len, double);
+	mkarray(l, len, double);
+	mkarray(cb, len, double);
+	mkarray(cb1, len, double);
+	mkarray(cb2, len, double);
+	mkarray(upper_lemire, len, double);
+	mkarray(lower_lemire, len, double);
 
 	bsf = INF;
 
 	/// Create envelop of the query: lower envelop, l, and upper envelop, u
-	lower_upper_lemire(q, m, r, l, u);
+	lower_upper_lemire(q, len, r, l, u);
 
 	/// Sort the query one time by abs(z-norm(q[i]))
-	for( i = 0; i<m; i++) {
+	for( i = 0; i<len; i++) {
 		Q_tmp[i].value = q[i];
 		Q_tmp[i].index = i;
 	}
-	qsort(Q_tmp, m, sizeof(Index),comp);
+	qsort(Q_tmp, len, sizeof(Index),comp);
 
 	/// also create another arrays for keeping sorted envelop
-	for( i=0; i<m; i++) {
+	for( i=0; i<len; i++) {
 		int o = Q_tmp[i].index;
 		order[i] = o;
 		qo[i] = q[o];
@@ -483,55 +410,51 @@ void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, 
 	free(Q_tmp);
 
 	/// Initial the cummulative lower bound
-	for( i=0; i<m; i++) {
+	for( i=0; i<len; i++) {
 		cb[i]=0;
 		cb1[i]=0;
 		cb2[i]=0;
 	}
 
-	int it=0, k=0;
+	int k=0;
 
 	//start with the first series
 	series = stack;
 
-	while(1) {
-		it++;
-
-		lower_upper_lemire(series, m, r, lower_lemire, upper_lemire);
+	for (int n = 1; n <= numseries; n++) {
+		lower_upper_lemire(series, len, r, lower_lemire, upper_lemire);
 
 		/// Use a constant lower bound to prune the obvious subsequence
-		lb_kim = lb_kim_hierarchy(series, q, 0, m, 0, 1, bsf);
+		lb_kim = lb_kim_hierarchy(series, q, 0, len, 0, 1, bsf);
 
 		if (lb_kim < bsf) {
 			/// Use a linear time lower bound to prune
 			/// uo, lo are envelop of the query.
-			lb_k = lb_keogh_cumulative(order, series, uo, lo, cb1, 0, m, 0, 1, bsf);
+			lb_k = lb_keogh_cumulative(order, series, uo, lo, cb1, 0, len, 0, 1, bsf);
 			if (lb_k < bsf) {
 				/// Use another lb_keogh to prune
 				/// qo is the sorted query. tz is unsorted z_normalized data.
-				lb_k2 = lb_keogh_data_cumulative(order, series, qo, cb2, lower_lemire, upper_lemire, m, 0, 1, bsf);
+				lb_k2 = lb_keogh_data_cumulative(order, series, qo, cb2, lower_lemire, upper_lemire, len, 0, 1, bsf);
 				if (lb_k2 < bsf) {
 					/// Choose better lower bound between lb_keogh and lb_keogh2 to be used in early abandoning DTW
 					/// Note that cb and cb2 will be cumulative summed here.
 					if (lb_k > lb_k2) {
-						cb[m-1]=cb1[m-1];
-						for(k=m-2; k>=0; k--)
+						cb[len-1]=cb1[len-1];
+						for(k=len-2; k>=0; k--)
 							cb[k] = cb[k+1]+cb1[k];
 					}
 					else {
-						cb[m-1]=cb2[m-1];
-						for(k=m-2; k>=0; k--)
+						cb[len-1]=cb2[len-1];
+						for(k=len-2; k>=0; k--)
 							cb[k] = cb[k+1]+cb2[k];
 					}
 
 					/// Compute DTW and early abandoning if possible
-					dist = dtw(series, q, cb, m, r, bsf);
+					dist = dtw(series, q, cb, len, r, bsf);
 
 					if( dist < bsf ) {
-						/// Update bsf
-						// loc is the index of the nearest neighbor
 						bsf = dist;
-						neighbor = it;
+						neighbor = n;
 					}
 				} else
 					pruned++;
@@ -540,51 +463,33 @@ void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, 
 		} else
 			pruned++;
 
-
 		// point to the next series in the data set
 		series += len;
 	}
 
-endsearch:
-	i = it;
-
-	free(q);
-	free(u);
-	free(l);
-	free(uo);
-	free(lo);
-	free(qo);
-	free(cb);
-	free(cb1);
-	free(cb2);
-	free(l_d);
-	free(u_d);
-	free(lower_lemire);
-	free(upper_lemire);
-
 	dist = sqrt(bsf);
 }
 
-void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right)
+void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 {
 	int neighbor;
 	double distance;
-	int pruned;
+	int pruned = 0;
 
 	double *stack;
 	double *needle;
-	int len;
+	int numseries, len;
 	int r;
 
-	if (nright != 4) {
+	if (nright != 3) {
 		mexErrMsgTxt("Three inputs expected\n");
 	}
-
 
 	/* First argument is the training data set: it must be a non-complex
 	 * matrix of double
 	 */
 	len = mxGetM(right[0]);
+	numseries = mxGetN(right[0]);
 	if (!mxIsDouble(right[0]) || mxIsComplex(right[0]) || len < 1) {
 		mexErrMsgTxt("First input argument (STACK) must be a "
 				"non-complex matrix of DOUBLE");
@@ -595,7 +500,7 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right)
 	 * with appropriate number of elements
 	 */
 	if (!mxIsDouble(right[1]) || mxIsComplex(right[1]) ||
-			mxGetNumberofElements(right[1] != len)) {
+			(int)mxGetNumberOfElements(right[1]) != len) {
 		mexErrMsgTxt("Second input argument (NEEDLE) must be a "
 				"non-complex vector of DOUBLE with as many "
 				"elements as the number of observations in "
@@ -606,8 +511,31 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right)
 	/* Third argument is the Sakoe-Chiba window size
 	 */
 	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
-			mxGetNumberofElements(right[2]) != 1) {
+			mxGetNumberOfElements(right[2]) != 1) {
 		mexErrMsgTxt("Third input argument (r) must be a non-complex "
 				"DOUBLE scalar");
+	}
+	r = mxGetScalar(right[2]);
+
+	ucrsuite_main(neighbor, distance, pruned, stack, needle, numseries,
+			len, r);
+
+	/* First output is the index of the nearest neighbor
+	 */
+	if (nleft >= 1) {
+		left[0] = mxCreateDoubleScalar(neighbor);
+	}
+
+	/* Second output is the distance to the nearest neighbor
+	 */
+	if (nleft >= 2) {
+		left[1] = mxCreateDoubleScalar(distance);
+	}
+
+	/* Third output is the number of instances pruned by lower-bounding and
+	 * early abandoning strategies
+	 */
+	if (nleft >= 3) {
+		left[2] = mxCreateDoubleScalar(pruned);
 	}
 }

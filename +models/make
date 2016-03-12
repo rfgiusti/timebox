@@ -1,0 +1,2 @@
+#!/bin/bash
+g++ -c  -Wall -I/opt/matlab/R2010b/extern/include -I/opt/matlab/R2010b/simulink/include -DMATLAB_MEX_FILE -ansi -D_GNU_SOURCE -fPIC -fno-omit-frame-pointer -pthread  -DMX_COMPAT_32 -O -DNDEBUG  "nn1dtw_mex.cpp" && g++ -O -pthread -shared -Wl,--version-script,/opt/matlab/R2010b/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined -o  "nn1dtw_mex.mexa64"  nn1dtw_mex.o  -Wl,-rpath-link,/opt/matlab/R2010b/bin/glnxa64 -L/opt/matlab/R2010b/bin/glnxa64 -lmx -lmex -lmat -lm -Wall
