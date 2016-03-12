@@ -377,8 +377,8 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 
 		/// We can abandon early if the current cummulative distace with lower bound together are larger than bsf
 		if (i+r < m-1 && min_cost + cb[i+r+1] >= bsf) {
-			//mxFree(cost);
-			//mxFree(cost_prev);
+			mxFree(cost);
+			mxFree(cost_prev);
 			return min_cost + cb[i+r+1];
 		}
 
@@ -391,20 +391,20 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 
 	/// the DTW distance is in the last cell in the matrix of size O(m^2) or at the middle of our array.
 	double final_dtw = cost_prev[k];
-	//mxFree(cost);
-	//mxFree(cost_prev);
+	mxFree(cost);
+	mxFree(cost_prev);
 	return final_dtw;
 }
 
 /// Main Function
-void ucrsuite_main(int &neighbor, double &distance, int &pruned, double *stack, double *q, int numseries, int len, int r)
+void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack, double *q, int numseries, int len, int r)
 {
 	double bsf;          /// best-so-far
 	int *order;          ///new order of the query
 	double *u, *l, *qo, *uo, *lo,*cb, *cb1, *cb2;
 
 	long long i;
-	double dist=0, lb_kim=0, lb_k=0, lb_k2=0;
+	double lb_kim=0, lb_k=0, lb_k2=0;
 	double *series, *upper_lemire, *lower_lemire;
 	Index *Q_tmp;
 
@@ -552,13 +552,14 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	*/
 	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
 			mxGetNumberOfElements(right[2]) != 1 ||
-			(r = mxGetScalar(right[2]) < 0)) {
+			(r = mxGetScalar(right[2])) < 0) {
 		mexErrMsgTxt("Third input argument (r) must be a non-complex, "
 				"non-negative DOUBLE scalar (integer value "
 				"expected)");
-
 	}
 
+	debug("Got dataset with %d series of length %d\n", numseries, len);
+	debug("Running 1-NNDTW with Sakoe-Chiba window of width %d\n", r);
 	debug("Calling ucrsuite_main()\n");
 	ucrsuite_main(neighbor, distance, pruned, stack, needle, numseries,
 			len, r);
