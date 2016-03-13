@@ -49,7 +49,7 @@
 
 using namespace std;
 
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG
 #include <cstdio>
@@ -398,7 +398,7 @@ double dtw(double* A, double* B, double *cb, int m, int r, double bsf = INF)
 
 /// Main Function
 void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack,
-		double *q, int skipindex, int numseries, int len, int r)
+		double *q, int numseries, int skipindex, int len, int r)
 {
 	double bsf;          /// best-so-far
 	int *order;          ///new order of the query
@@ -408,6 +408,10 @@ void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack,
 	double lb_kim=0, lb_k=0, lb_k2=0;
 	double *series, *upper_lemire, *lower_lemire;
 	Index *Q_tmp;
+
+	debug("ucrsuite_main() called with arguments (&int, &int, &int, "
+			"double*, double*, %d, %d, %d, %d)\n", numseries,
+			skipindex, len, r);
 
 	debug("ucrsuite_main(): allocating stuff\n");
 	mkarray(qo, len, double);
@@ -518,6 +522,47 @@ void ucrsuite_main(int &neighbor, double &dist, int &pruned, double *stack,
 
 void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 {
+	/*
+	 *  Usage:
+	 *  
+	 *  	[bestidx, distance, pruned] = mexFunction(stack, needle, ...
+	 *  						r, skipindex)
+	 *
+	 *  Where the input arguments are:
+         *
+         *     stack     - the data set (observations ONLY; column-wise matrix*)
+         *     needle    - the test instance (observations ONLY)
+	 *     r         - the width of the Sakoe-Chiba window in number of
+	 *                 observations. If a floating point value is supplied,
+	 *                 it will be rounded to the next integer
+         *     skipindex - if the test instance is contained in the data set,
+         *                 skipindex must be the instance of the test instance;
+         *                 otherwise it should be -1
+         *
+         *  And the output arguments are:
+         *
+         *     bestidx   - the index of the nearest neighbor within the data set
+         *     distance  - the distance from the test instance to the neighbors
+	 *     pruned    - the number of DTW calculations pruned by LB_Kim,
+	 *                 LB_Keogh, and LB_Keogh2
+         *
+         *  *Notice: TimeBox data sets contains instances in rows and
+	 *  observations in columns. However, this MEX requires the instances
+	 *  in the columns and the observations in the rows. Furthermore, this
+	 *  MEX requires ONLY the observations.
+         *  
+         *  Usage example:
+         *
+         *     [train, test] = ts.load('Sample dataset');
+         *     [bestidx, distance, pruned] = mexFunction(stack(:, 2:end)', ...
+	 *     					test(1,:), 10, -1)
+	 *
+	 *  *Notice: contrary to MODELS.NN and MODELS.NN1EUCLIDEAN, this MEX
+	 *  returns ONLY one instance as best index, even if there are multiple
+	 *  neighbors. This is because, due to lower-bounding, this classifier
+	 *  will not calculate the distance to all instances, therefore it is
+	 *  not able to detect all equally distant neighbors.
+	 */
 	int neighbor;
 	double distance;
 	int pruned = 0;
@@ -530,8 +575,8 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 
 	start_debugger();
 
-	if (nright != 3) {
-		mexErrMsgTxt("Three inputs expected\n");
+	if (nright != 4) {
+		mexErrMsgTxt("Four inputs expected\n");
 	}
 
 	/* First argument is the training data set: it must be a non-complex
@@ -539,6 +584,10 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	 */
 	len = mxGetM(right[0]);
 	numseries = mxGetN(right[0]);
+	debug("STACK: mxIsDouble(): %d, mxIsComplex(): %d, mxGetM(): %d, "
+			"mxGetN(): %d\n", mxIsDouble(right[0]),
+			mxIsComplex(right[0]), mxGetM(right[0]),
+			mxGetN(right[0]));
 	if (!mxIsDouble(right[0]) || mxIsComplex(right[0]) || len < 1) {
 		mexErrMsgTxt("First input argument (STACK) must be a "
 				"non-complex matrix of DOUBLE");
@@ -548,6 +597,10 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	/* Second argument is the needle: it must be a non-complex row vector
 	 * with appropriate number of elements
 	 */
+	debug("NEEDLE: mxIsDouble(): %d, mxIsComplex(): %d, mxGetM(): %d, "
+			"mxGetN(): %d\n", mxIsDouble(right[1]),
+			mxIsComplex(right[1]), mxGetM(right[1]),
+			mxGetN(right[1]));
 	if (!mxIsDouble(right[1]) || mxIsComplex(right[1]) ||
 			(int)mxGetNumberOfElements(right[1]) != len) {
 		mexErrMsgTxt("Second input argument (NEEDLE) must be a "
@@ -558,7 +611,11 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	needle = mxGetPr(right[1]);
 
 	/* Third argument is the skipindex controller
-	 */
+	*/
+	debug("SKIPINDEX: mxIsDouble(): %d, mxIsComplex(): %d, mxGetM(): %d, "
+			"mxGetN(): %d\n", mxIsDouble(right[2]),
+			mxIsComplex(right[2]), mxGetM(right[2]),
+			mxGetN(right[2]));
 	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
 			mxGetNumberOfElements(right[2]) != 1) {
 		mexErrMsgTxt("Third input argument (SKIPINDEX) must be a "
@@ -568,7 +625,11 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	skipindex = mxGetScalar(right[2]);
 
 	/* Fourth argument is the Sakoe-Chiba window size
-	 */
+	*/
+	debug("r: mxIsDouble(): %d, mxIsComplex(): %d, mxGetM(): %d, "
+			"mxGetN(): %d\n", mxIsDouble(right[3]),
+			mxIsComplex(right[3]), mxGetM(right[3]),
+			mxGetN(right[3]));
 	if (!mxIsDouble(right[3]) || mxIsComplex(right[3]) ||
 			mxGetNumberOfElements(right[3]) != 1 ||
 			(r = mxGetScalar(right[3])) < 0) {
@@ -580,19 +641,19 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	debug("Got dataset with %d series of length %d\n", numseries, len);
 	debug("Running 1-NNDTW with Sakoe-Chiba window of width %d\n", r);
 	debug("Calling ucrsuite_main()\n");
-	ucrsuite_main(neighbor, distance, pruned, stack, needle, skipindex,
-			numseries, len, r);
+	ucrsuite_main(neighbor, distance, pruned, stack, needle, numseries,
+			skipindex, len, r);
 	debug("Returned from ucrsuite_main()\n");
 
 	/* First output is the index of the nearest neighbor
-	 */
+	*/
 	if (nleft >= 1) {
 		debug("Creating first output\n");
 		left[0] = mxCreateDoubleScalar(neighbor);
 	}
 
 	/* Second output is the distance to the nearest neighbor
-	 */
+	*/
 	if (nleft >= 2) {
 		debug("Creating second output\n");
 		left[1] = mxCreateDoubleScalar(distance);

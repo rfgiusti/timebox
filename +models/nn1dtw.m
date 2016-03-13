@@ -62,6 +62,7 @@ window = [];
 if numel(varargin) == 1
     if opts.isa(varargin{1})
         window = opts.get(varargin{1}, 'dists::arg', []);
+        options = varargin{1};
     else
         tb.assert(numel(varargin{1}) == 1 && isnumeric(varargin{1}), ['If supplied, third argument must be either ' ...
             'an OPTS object or a numeric value']);
@@ -84,7 +85,7 @@ else
     skipindex = -1;
 end
 
-[neighbor, distance] = models.nn1dtw_mex(stack(:, 2:end)', needle, window, skipindex);
+[neighbor, distance] = models.nn1dtw_mex(stack(:, 2:end)', needle(2:end), skipindex, window);
 label = stack(neighbor, 1);
 hit = abs(label - needle(1)) < epsilon;
 end
