@@ -4,3 +4,4 @@
 *.mexw32
 *.mexw64
 .*.swp
+a.out

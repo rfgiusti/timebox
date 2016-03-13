@@ -9,6 +9,8 @@ TimeBox 0.11.7: predicted
   Euclidean distance and will use the fast 1-NN version. To use the old
   MODELS::NN, either explicitly specify a distance function or the
   classification model in the option "runs::model".
+- Implements MODELS.NN1DTW for fast execution of 1-NNDTW using lower-
+  bounding techniques and early abandon.
 
 
 TimeBox 0.10.6: released 2016-Mar-04
