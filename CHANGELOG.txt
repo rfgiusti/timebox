@@ -1,6 +1,11 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.10.7: released 2016-Mar-18
+- Fixes an issue with TB.SHARPSHOOT, implementing options similar to
+  those of TB.SCAT.
+
+
 TimeBox 0.10.6: released 2016-Mar-04
 - Introduces functions to get information on data sets without the need
   to load the full data: TS.LOADMETA and TS.SAVEMETA handle meta-
