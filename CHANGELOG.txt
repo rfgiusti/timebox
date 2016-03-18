@@ -17,6 +17,8 @@ TimeBox 0.11.7: predicted
 TimeBox 0.10.7: released 2016-Mar-18
 - Fixes an issue with TB.SHARPSHOOT, implementing options similar to
   those of TB.SCAT.
+- Fixes an issue with TB.SCAT which caused arguments to be improperly
+  parsed and sometimes ignored.
 
 
 TimeBox 0.10.6: released 2016-Mar-04
