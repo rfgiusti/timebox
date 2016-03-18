@@ -1,6 +1,7 @@
 TimeBox Change Log
 ------------------
 
+
 TimeBox 0.11.7: predicted
 - Implements MODELS.NN1EUCLIDEAN for fast execution of 1-NN with
   Euclidean distance using early abandon.
@@ -11,6 +12,11 @@ TimeBox 0.11.7: predicted
   classification model in the option "runs::model".
 - Implements MODELS.NN1DTW for fast execution of 1-NNDTW using lower-
   bounding techniques and early abandon.
+
+
+TimeBox 0.10.7: released 2016-Mar-18
+- Fixes an issue with TB.SHARPSHOOT, implementing options similar to
+  those of TB.SCAT.
 
 
 TimeBox 0.10.6: released 2016-Mar-04

@@ -16,19 +16,20 @@ function scat(vdata, hdata, varargin)
 %   SCAT(vdata,hdata,...) takes optional arguments. Each argument must
 %   be of type CHAR and the first character must be '-'. If the argument
 %   takes additional parameters, the parameters must follow the
-%   arguments. The acceptable arguments are the following:
+%   arguments immediately. The acceptable arguments are the following:
 %
 %       -invisible      does not show the scatter plot
-%       -labels         the following argument is a cell which must
-%                       contain two elements of type CHAR: the first is
-%                       the label for the vertical method, and the
-%                       second is the label for the horizontal method
+%       -labels         the next argument must a cell which with two
+%                       elements of type CHAR: the first is the label for
+%                       the vertical method, and the second is the label
+%                       for the horizontal method
 %       -nofigure       does not create a new figure object; overrides
 %                       -invisible
 %       -nooverwrite    only valid if -writepdf is also supplied; does
-%                       not overwrite the write path
+%                       not overwrite the PDF filedump
 %       -noshadow       does not include a shadowed area under the upper
-%                       method (try this option if MATLAB is crashing)
+%                       method (try this option if MATLAB is crashing when
+%                       dumping the plot to a PDF)
 %       -writepdf       the following argument must be of type CHAR; the
 %                       plot will be saved as a PDF in the given path
 
@@ -47,16 +48,15 @@ makeshadow = 1;
 % If the first two variadic arguments exist and do not start with '-',
 % it is assumed that they are the labels for the vertical and horizontal
 % labels
+next = 1;
 if numel(varargin) >= 2
     v1 = varargin{1};
     v2 = varargin{2};
     if isequal(class(v1), 'char') && isequal(class(v2), 'char') && v1(1) ~= '-' && v2(1) ~= '-'
         vlabel = v1;
         hlabel = v2;
+        next = 3;
     end
-    next = 3;
-else
-    next = 1;
 end
 
 % Process the remaining arguments
@@ -81,14 +81,14 @@ while next <= numel(varargin)
         case '-writepdf'
             tb.assert(numel(varargin) > next, 'Missing value for option -writepdf');
             savepath = varargin{next + 1};
-            tb.assert(isequal(class(savepath), 'char'), 'Usage: -labels, writepath');
+            tb.assert(isequal(class(savepath), 'char'), 'Usage: -writepdf, writepath');
             next = next + 2;
         case '-noshadow'
             makeshadow = 0;
             next = next + 1;
         otherwise
             if isequal(class(varargin{next}), 'char')
-                error('splot:InputError', 'Unknown parameter "%s"', varargin{next});
+                error('splot:InputError', 'Unknown argument: "%s"', varargin{next});
             else
                 error('splot:InputError', 'Parameter #%d of class %s is unexpected', next, class(varargin{next}));
             end

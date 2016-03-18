@@ -36,29 +36,24 @@ function sharpshoot(Xa, Ya, Xe, Ye, varargin)
 %       % data sets
 %       numdatasets = min(5, numel(ts.getnames));
 %       
+%   SHARPSHOOT(Xa,Ya,Xb,Yb,vlabel,hlabel) uses `vlabel' and `hlabel' as
+%   labels for the horizontal and vertical axes. Both values must be of
+%   type CHAR and the first character cannot be a '-'.
 %
-%       
+%   SHARPSHOOT(Xa,Ya,Xb,Yb,...) takes optional arguments. Each argument
+%   must be of type CHAR and the first character must be '-'. If the
+%   argument takes additional parameters, the parameters must follow the
+%   arguments immediately. The acceptable arguments are the following: 
 %
-%   SCAT(vdata,hdata,vlabel,hlabel) uses `vlabel' and `hlabel' as labels
-%   for the horizontal and vertical methods. Both values must be of type
-%   CHAR and the first character cannot be '-'.
-%
-%   SCAT(vdata,hdata,...) takes optional arguments. Each argument must
-%   be of type CHAR and the first character must be '-'. If the argument
-%   takes additional parameters, the parameters must follow the
-%   arguments. The acceptable arguments are the following:
-%
-%       -invisible      does not show the scatter plot
-%       -labels         the following argument is a cell which must
-%                       contain two elements of type CHAR: the first is
-%                       the label for the vertical method, and the
-%                       second is the label for the horizontal method
+%       -invisible      does not show the sharpshoot plot
+%       -labels         the next argument must a cell which with two
+%                       elements of type CHAR: the first is the label for
+%                       the vertical method, and the second is the label
+%                       for the horizontal method
 %       -nooverwrite    only valid if -writepdf is also supplied; does
-%                       not overwrite the write path
-%       -noshadow       does not include a shadowed area under the upper
-%                       method (try this option if MATLAB is crashing)
-%       -writepdf       the following argument must be of type CHAR; the
-%                       plot will be saved as a PDF in the given path
+%                       not overwrite the PDF filedump
+%       -writepdf       the next argument must be of type CHAR; the plot
+%                       will be saved as a PDF in the given path 
 tb.assert(isequal(class(Ya), 'cell'), 'Ya must be of type CELL');
 tb.assert(isequal(class(Xa), 'cell'), 'Xa must be of type CELL');
 tb.assert(isequal(class(Ye), 'cell'), 'Ye must be of type CELL');
@@ -70,6 +65,57 @@ tb.assert(numel(Xe) == numel(Xa), 'Xa, Ya, Xe, and Ye must have equal number of 
 % Default options
 vlabel = 'Expected gain';
 hlabel = 'Actual gain';
+invisible = 0;
+nofigure = 0;
+nooverwrite = 0;
+savepath = '';
+
+% If the first two variadic arguments exist and do not start with '-',
+% it is assumed that they are the labels for the vertical and horizontal
+% labels
+next = 1;
+if numel(varargin) >= 2
+    v1 = varargin{1};
+    v2 = varargin{2};
+    if isequal(class(v1), 'char') && isequal(class(v2), 'char') && v1(1) ~= '-' && v2(1) ~= '-'
+        vlabel = v1;
+        hlabel = v2;
+        next = 3;
+    end
+end
+
+% Process the remaining arguments
+while next <= numel(varargin)
+    switch varargin{next}
+        case '-labels'
+            tb.assert(numel(varargin) > next, 'Missing value for option -labels');
+            labels = varargin{next + 1};
+            tb.assert(isequal(class(labels), 'cell') && numel(labels) == 2, 'Usage: -labels, {vlabel, hlabel}');
+            vlabel = labels{1};
+            hlabel = labels{2};
+            next = next + 2;
+        case '-invisible'
+            invisible = 1;
+            next = next + 1;
+        case '-nofigure'
+            nofigure = 1;
+            next = next + 1;
+        case '-nooverwrite'
+            nooverwrite = 1;
+            next = next + 1;
+        case '-writepdf'
+            tb.assert(numel(varargin) > next, 'Missing value for option -writepdf');
+            savepath = varargin{next + 1};
+            tb.assert(isequal(class(savepath), 'char'), 'Usage: -writepdf, writepath');
+            next = next + 2;
+        otherwise
+            if isequal(class(varargin{next}), 'char')
+                error('sharpshoot:InputError', 'Unknown argument: "%s"', varargin{next});
+            else
+                error('sharpshoot:InputError', 'Parameter #%d of class %s is unexpected', next, class(varargin{next}));
+            end
+    end 
+end
 
 % Get the non-empty data, calculate the gains
 numpoints = 0;
@@ -88,15 +134,21 @@ end
 gainA(numpoints+1:end) = [];
 gainX(numpoints+1:end) = [];
 
+% Set the visibility flag for figure()
+if invisible
+    visibility = 'off';
+else
+    visibility = 'on';
+end
+
+% Create a new figure
+if ~nofigure
+    f = figure('Visible', visibility);
+end
+
 % Plot the data
 scatter(gainX, gainA, 'r', 'filled');
 hold on;
-% if makeshadow
-%     py = patch([0 0 1], [0 1 1], 'y');
-%     pr = patch([0 0 1], [0 1 1], 'r');
-%     alpha(py, .2);
-%     alpha(pr, .1);
-% end
 
 % Make the grid. Add a small margin for visibility
 plot([min(0.99, min(gainX)-0.01) max(1.05, max(gainX)+0.01)], [1 1], 'k');
@@ -105,4 +157,15 @@ ylabel(strrep(vlabel, '_', '\_'), 'FontSize', 12, 'FontWeight', 'bold');
 xlabel(strrep(hlabel, '_', '\_'), 'FontSize', 12, 'FontWeight', 'bold');
 axis('square');
 
+% Save to PDF, if the -writepdf options has been supplied
+set(gcf, 'PaperSize', [5 5]);
+set(gcf, 'PaperPosition', [0 0 5 5]);
+if ~isempty(savepath) && ~(exist(savepath, 'file') && nooverwrite)
+    print(f, '-dpdf', savepath);
+end
+
+% Delete the graph resources if the graph is supposed to go invisible
+if invisible
+    delete(gcf);
+end
 end
