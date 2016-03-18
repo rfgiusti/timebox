@@ -31,7 +31,7 @@ has not been tested on any version of Microsoft Windows.
 
 To get TimeBox:
 
-1. Get the latest stable release <a href="https://github.com/rfgiusti/timebox/archive/stable.zip">here</a>; or
+1. Get the latest stable release <a href="https://github.com/rfgiusti/timebox/releases/latest">here</a>; or
 1. Get the latest code as soon as it's developed <a href="https://github.com/rfgiusti/timebox/archive/master.zip">here</a>; or
 1. Download an old version of TimeBox from the <a href="https://github.com/rfgiusti/timebox/releases">releases section</a>.
    If you got here while trying to reproduce some paper results, this is probably what you want.
