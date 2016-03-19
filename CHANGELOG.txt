@@ -12,6 +12,7 @@ TimeBox 0.11.7: predicted
   classification model in the option "runs::model".
 - Implements MODELS.NN1DTW for fast execution of 1-NNDTW using lower-
   bounding techniques and early abandon.
+- TB.MERGECELLS now returns the removed data as a second argument.
 
 
 TimeBox 0.10.7: released 2016-Mar-18

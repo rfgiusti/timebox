@@ -1,4 +1,4 @@
-function merged = mergecells(varargin)
+function [merged, removed] = mergecells(varargin)
 %TB.MERGECELLS  Takes several columns cells and concatenate them into a
 %single cell, excluding rows where any cell contains empty data
 %   MERGECELLS(cell1,cell2) returns the cell [cell1(:) cell2(:)]
@@ -20,6 +20,9 @@ function merged = mergecells(varargin)
 %
 %   In the above example, the second row was excluded because cell1{2,1}
 %   was empty.
+%
+%   [M,R] = MERGECELLS(cell1,cell2,...) returns the merged rows in M and
+%   the removed rows in R.
 numcolumns = 0;
 maxrows = size(varargin{1}, 1);
 for i = 1:numel(varargin)
@@ -27,31 +30,38 @@ for i = 1:numel(varargin)
     numcolumns = numcolumns + size(varargin{i}, 2);
 end
 
-effectiverows = 0;
 merged = cell(maxrows, numcolumns);
+removed = cell(maxrows, numcolumns);
+mergecount = 0;
+removecount = 0;
 
 for row = 1:maxrows
-    rowdata = getrow(row, numcolumns, varargin{:});
-    if ~isempty(rowdata)
-        effectiverows = effectiverows + 1;
-        merged(effectiverows,:) = rowdata;
+    [rowdata, isfull] = getrow(row, numcolumns, varargin{:});
+    if isfull
+        mergecount = mergecount + 1;
+        merged(mergecount,:) = rowdata;
+    else
+        removecount = removecount + 1;
+        removed(removecount,:) = rowdata;
     end
 end
 
 % Remove empty rows
-merged(effectiverows+1:end,:) = [];
+merged(mergecount+1:end,:) = [];
+removed(removecount+1:end,:) = [];
 end
 
 
-function rowdata = getrow(row, numcolumns, varargin)
-% Gather the row data for all cells, only if they are all non-empty
+function [rowdata, isfull] = getrow(row, numcolumns, varargin)
+% Join the rows of all cells into a single cell array and check if the are
+% all non-empty
+isfull = 1;
 rowdata = cell(1, numcolumns);
 nextcol = 1;
 for i = 1:numel(varargin)
     for j = 1:size(varargin{i}, 2)
         if isempty(varargin{i}{row, j})
-            rowdata = [];
-            return
+            isfull = 0;
         end
         rowdata{nextcol} = varargin{i}{row,j};
         nextcol = nextcol + 1;
