@@ -1,8 +1,7 @@
 TimeBox Change Log
 ------------------
 
-
-TimeBox 0.11.7: predicted
+TimeBox 0.11.8: planned
 - Implements MODELS.NN1EUCLIDEAN for fast execution of 1-NN with
   Euclidean distance using early abandon.
 - When invoking RUNS.PARTITIONED or RUNS.LEAVEONEOUT without specifying
@@ -13,6 +12,7 @@ TimeBox 0.11.7: predicted
 - Implements MODELS.NN1DTW for fast execution of 1-NNDTW using lower-
   bounding techniques and early abandon.
 - TB.MERGECELLS now returns the removed data as a second argument.
+- TB.LOADFILES accepts a matrix as first argument.
 
 
 TimeBox 0.10.7: released 2016-Mar-18

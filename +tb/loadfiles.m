@@ -6,7 +6,9 @@ function data = loadfiles(files, mask)
 %   is not found, then data{i} will contain the empty matrix [].
 %
 %   data = LOADFILES(files,mask) does the same, but each `file{i}' is
-%   used as argument to replace a '%s' in the CHAR `mask'.
+%   used as argument to replace a '%s' in the CHAR `mask'. If `files' is
+%   not a cell, this function will attempt to access each element as
+%   `file(i)' without checking the type of `file'.
 %
 %       Example:
 %
@@ -27,12 +29,25 @@ if ~exist('mask', 'var')
 end
 
 data = cell(numel(files), 1);
+paths = getpaths(mask, files);
+
 for i = 1:numel(files)
-    path = sprintf(mask, files{i});
-    if exist(path, 'file')
-        data{i} = load(path);
+    if exist(paths{i}, 'file')
+        data{i} = load(paths{i});
     else
         data{i} = [];
+    end
+end
+end
+
+
+function paths = getpaths(mask, files)
+paths = cell(numel(files), 1);
+for i = 1:numel(files)
+    if iscell(files)
+        paths{i} = sprintf(mask, files{i});
+    else
+        paths{i} = sprintf(mask, files(i));
     end
 end
 end
