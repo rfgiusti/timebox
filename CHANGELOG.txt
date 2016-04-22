@@ -1,16 +1,19 @@
 TimeBox Change Log
 ------------------
 
-TimeBox 0.11.8: planned
+TimeBox 0.11.8: released 2016-Apr-21
 - Implements MODELS.NN1EUCLIDEAN for fast execution of 1-NN with
   Euclidean distance using early abandon.
 - When invoking RUNS.PARTITIONED or RUNS.LEAVEONEOUT without specifying
   a distance function, TimeBox will assume the desired distance is the
   Euclidean distance and will use the fast 1-NN version. To use the old
-  MODELS::NN, either explicitly specify a distance function or the
+  MODELS.NN, either explicitly specify a distance function or the
   classification model in the option "runs::model".
-- Implements MODELS.NN1DTW for fast execution of 1-NNDTW using lower-
-  bounding techniques and early abandon.
+- The UCR Suite was incorporated into TimeBox and modified into a MEX
+  function. Please view THIRD-PARTY.txt for the UCR Suite copyright
+  disclaimer.
+- Implements MODELS.NN1DTW for fast execution of 1-NNDTW using the
+  lower-bounding and early abandon with the UCR Suite.
 - TB.MERGECELLS now returns the removed data as a second argument.
 - TB.LOADFILES accepts a matrix as first argument.
 
