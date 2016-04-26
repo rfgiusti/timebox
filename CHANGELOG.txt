@@ -2,6 +2,7 @@ TimeBox Change Log
 ------------------
 
 TimeBox 0.12: planned
+- TRANSFOR.SAX no longer normalizes the input data.
 - Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
 
 

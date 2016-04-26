@@ -34,17 +34,11 @@ cutter = opts.get(options, 'sax::cut function', @transform.sax.bell);
 % Do we have a test dataset?
 testds = exist('test', 'var');
 
-% Z-norm it
-trainz = ts.znorm(train);
-if testds
-    testz = ts.znorm(test);
-end
-
 % Get it segmented
 if testds
-    [trains, tests] = segfun(trainz, testz, options);
+    [trains, tests] = segfun(train, test, options);
 else
-    trains = segfun(trainz, options);
+    trains = segfun(train, options);
 end
 
 % Get the cutpoints
