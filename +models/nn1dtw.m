@@ -1,4 +1,4 @@
-function [neighbor, distance, label, hit] = nn1dtw(stack, needle, varargin)
+function [neighbor, distance, label, hit] = nn1dtw(stack, needle, windowlength_or_optsobj)
 %MODELS.NN1DTW    Run the 1-Nearest Neighbor classification model for a
 %single instance on a data set using the UCR Suite for 1-NNDTW. Has similar
 %behavior to MODELS.NN with @DISTS.DTW_Cpp, but much faster. 
@@ -59,15 +59,15 @@ tb.assert(serieslen >= 5, ['Series of length 5 or longer are required for MODELS
     'use MODELS.NN with DISTS.DTW_Cpp']);
 
 window = [];
-if numel(varargin) == 1
-    if opts.isa(varargin{1})
-        window = opts.get(varargin{1}, 'dists::arg', []);
-        options = varargin{1};
+if exist('windowlength_or_optsobj', 'var')
+    if opts.isa(windowlength_or_optsobj)
+        options = windowlength_or_optsobj;
+        window = opts.get(options, 'dists::arg', []);
     else
-        tb.assert(numel(varargin{1}) == 1 && isnumeric(varargin{1}), ['If supplied, third argument must be either ' ...
-            'an OPTS object or a numeric value']);
-        window = varargin{1};
+        window = windowlength_or_optsobj;
         options = opts.empty;
+        tb.assert(numel(window) == 1 && isnumeric(window), ['If supplied, third argument must be either an OPTS ' ...
+            'object or a numeric value']);
     end
 else
     options = opts.empty;

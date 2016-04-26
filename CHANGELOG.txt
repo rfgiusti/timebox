@@ -1,6 +1,10 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.12: planned
+- Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
+
+
 TimeBox 0.11.8: released 2016-Apr-21
 - Implements MODELS.NN1EUCLIDEAN for fast execution of 1-NN with
   Euclidean distance using early abandon.
