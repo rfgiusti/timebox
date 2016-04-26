@@ -2,7 +2,9 @@ TimeBox Change Log
 ------------------
 
 TimeBox 0.12: planned
-- TRANSFOR.SAX no longer normalizes the input data.
+- TRANSFORM.SAX no longer normalizes the input data.
+- TRANSFORM.SAX now works on the breakpoints instead of each PAA
+  value. This makes the transformation much faster.
 - Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
 
 

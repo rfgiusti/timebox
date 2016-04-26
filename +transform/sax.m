@@ -4,8 +4,7 @@ function [trainsax, testsax] = sax(train, test, options)
 %   data set DS, using integers 1, 2, 3, ... to index the symbols 'a', 'b',
 %   'c', .... 
 %
-%   DSX = SAX(DS,OPTS) does the same, but takes options from OPTS instead
-%   of using default values.
+%   DSX = SAX(DS,OPTS) does the same, but takes options from OPTS.
 %
 %   [TRAINX,TESTX] = SAX(TRAIN,TEST,...) transforms both the training and
 %   the test data set.
@@ -57,15 +56,13 @@ end
 
 
 
-function out = saxpart(in, cutp)
+function sax = saxpart(ds, cutp)
 % Apply SAX transformation on a single dataset
+sax = ones(size(ds));
+for i = 2:numel(cutp)
+    sax = sax + (ds >= cutp(i));
+end
 
-% Separate data points and observations
-[classes, data] = ts.removeclasses(in);
-
-% Make SAX according to cut points
-sax = arrayfun(@(x)(sum(x >= cutp)), data);
-
-% Add classes back to SAX info
-out = ts.addclasses(classes, sax);
+% Copy the classes back into the first column
+sax(:, 1) = ds(:, 1);
 end
