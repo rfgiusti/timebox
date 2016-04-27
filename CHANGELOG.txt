@@ -1,6 +1,11 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.12: planned
+- TRANSFORM.SAX now works on the breakpoints instead of each PAA
+  value. This makes the transformation much faster.
+
+
 TimeBox 0.11.9: planned
 - TRANSFORM.SAX no longer Z-normalizes the series.
 - Deprecated options: "sax::cut function".

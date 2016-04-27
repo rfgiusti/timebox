@@ -61,20 +61,16 @@ end
 end
 
 
-
-function out = saxpart(in, cutp)
+function sax = saxpart(ds, cutp)
 % Apply SAX transformation on a single dataset
-
-% Separate data points and observations
-[classes, data] = ts.removeclasses(in);
-
-% Make SAX according to cut points
-sax = arrayfun(@(x)(sum(x >= cutp)), data);
-
-% Add classes back to SAX info
-out = ts.addclasses(classes, sax);
+sax = ones(size(ds));
+for i = 2:numel(cutp)
+    sax = sax + (ds >= cutp(i));
 end
 
+% Copy the classes back into the first column
+sax(:, 1) = ds(:, 1);
+end
 
 
 function [train, test] = getbreakpoints(~, arg2, arg3)
