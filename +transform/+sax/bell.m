@@ -1,6 +1,6 @@
 function [train, test] = bell(~, arg2, arg3)
 %TRANSFORM.SAX.BELL Get SAX cut points according to a bell N(0,1)
-%distribution.
+%distribution. DEPRECATED since TimeBox 0.11.9
 %   CP = BELL(DS) returns the cut points for the data set DS with default
 %   options (alphabet size = 4). The data set is assumed to have been
 %   normalized to a mean of zero and a standard deviation of one. Data sets
@@ -16,6 +16,7 @@ function [train, test] = bell(~, arg2, arg3)
 %
 %   Options:
 %       sax::alphabet size      (default: 4)
+warnobsolete('transform:sax:bell');
 if exist('arg3', 'var')
     option = arg3;
 elseif exist('arg2', 'var') && opts.isa(arg2)

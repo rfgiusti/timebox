@@ -1,7 +1,10 @@
 TimeBox Change Log
 ------------------
 
-TimeBox 0.12: planned
+TimeBox 0.11.9: planned
+- TRANSFORM.SAX no longer Z-normalizes the series.
+- Deprecated options: "sax::cut function".
+- Deprecated functions: TRANSFORM.SAX.BELL and TRANSFORM.SAX.UNIF.
 - Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
 
 
