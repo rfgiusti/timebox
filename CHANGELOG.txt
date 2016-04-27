@@ -1,6 +1,12 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.11.9: planned
+- TRANSFORM.SAX no longer Z-normalizes the series.
+- Deprecated options: "sax::cut function".
+- Deprecated functions: TRANSFORM.SAX.BELL and TRANSFORM.SAX.UNIF.
+
+
 TimeBox 0.11.8: released 2016-Apr-21
 - Implements MODELS.NN1EUCLIDEAN for fast execution of 1-NN with
   Euclidean distance using early abandon.

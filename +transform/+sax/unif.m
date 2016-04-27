@@ -1,5 +1,6 @@
 function [train, test] = unif(~, arg2, arg3)
 %This function is a stub and has not been implemented yet.
+warnobsolete('transform:sax:unif')
 if exist('arg3', 'var')
     option = arg3;
 elseif exist('arg2', 'var') && opts.isa(arg2)
