@@ -12,7 +12,6 @@ function [trainsax, testsax] = sax(train, test, options)
 %   Options:
 %       sax::alphabet size          (default: 4)
 %       sax::segmenting function    (default: @transform.paa)
-%       sax::cut function           (DEPRECATED)
 %
 %   This function assumes the time series to be Z-normalized (approximately
 %   standard normal).
@@ -31,10 +30,6 @@ if ~exist('options', 'var')
 end
 
 segfun = opts.get(options, 'sax::segmenting function', @transform.paa);
-cutter = opts.get(options, 'sax::cut function', @getbreakpoints);
-if opts.has(options, 'sax::cut function')
-    warning('transform:sax', 'The option "sax::cut function" is obsolete and will be removed in the future.');
-end
 
 % Do we have a test dataset?
 testds = exist('test', 'var');
@@ -48,9 +43,9 @@ end
 
 % Get the cutpoints
 if testds
-    [trainc, testc] = cutter(trains, tests, options);
+    [trainc, testc] = getbreakpoints(trains, tests, options);
 else
-    trainc = cutter(trains, options);
+    trainc = getbreakpoints(trains, options);
 end
 
 % Do it

@@ -4,6 +4,8 @@ TimeBox Change Log
 TimeBox 0.12: planned
 - TRANSFORM.SAX now works on the breakpoints instead of each PAA
   value. This makes the transformation much faster.
+- Removed options: "sax::cut function".
+- Removed functions: TRANSFORM.SAX.BELL and TRANSFORM.SAX.UNIF.
 
 
 TimeBox 0.11.9: planned
