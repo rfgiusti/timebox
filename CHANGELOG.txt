@@ -1,6 +1,11 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.12: planned
+- TRANSFORM.PAA no longer accepts using "paa::num segments" and
+  "paa::segment size" simultaneously.
+
+
 TimeBox 0.11.9: planned
 - TRANSFORM.SAX no longer Z-normalizes the series.
 - Deprecated options: "sax::cut function".
