@@ -1,5 +1,5 @@
 function [trainpaa, testpaa] = paa(train, test, options)
-%TRANSFORM.PAA Piecewise Aggregate Approximation of time series data set.
+%TRANSFORM.PAA   Piecewise Aggregate Approximation of time series data set.
 %   DSP = PAA(DS) returns the Piecewise Aggregate Approximation of the time
 %   series in DS.
 %
@@ -13,11 +13,8 @@ function [trainpaa, testpaa] = paa(train, test, options)
 %       paa::num segments       (default: 10)
 %       paa::segment size       (default: 0)
 %
-%   The option "paa::segment size" takes precedence on "paa::num segments".
-%   If "paa::segment size" is different than zero, then the number of
-%   segments will be calculated with from the specified segment size,
-%   overriding assignments to "paa::num segments".
-
+%   The options "paa::segment size" and "paa::num segments" may not be used
+%   simultaneously.
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;
@@ -26,6 +23,8 @@ if ~exist('options', 'var')
         options = opts.empty;
     end
 end
+assert(~(opts.has(options, 'paa::num segments') && opts.has(options, 'paa::segment size')), ['The options ' ...
+    '"paa::num segments" and "paa::segment size" may not be used simultaneously.']);
 numseg = opts.get(options, 'paa::num segments', 10);
 segsize = opts.get(options, 'paa::segment size', 0);
 if segsize
