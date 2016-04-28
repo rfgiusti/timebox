@@ -51,6 +51,9 @@ function [votes, weights, rankings] = weighbyacc(dsname, trainclasses, testclass
 %
 %       dme::limit      (default: 0)
 %       dme::accpath    (default: --)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 numclassifiers = numel(distm);
 numinstances = numel(testclasses);
 

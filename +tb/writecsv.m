@@ -32,6 +32,9 @@ function writecsv(savepath, header, varargin)
 %       d2 = {'c1'; 'c2'; 'c3'};
 %       % INVALID: tb.writecsv('/tmp/test.csv', '%', {'a','b','c'}, d1, d2);
 %       tb.writecsv('/tmp/test.csv', ';', {'a','b','c'}, d1, d2);
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if isequal(class(header), 'char')
     separator = header;
     header = varargin{1};

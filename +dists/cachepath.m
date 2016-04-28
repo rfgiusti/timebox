@@ -15,6 +15,9 @@ function path = cachepath(dsname, varargin)
 %
 %   CACHEPATH(DSNAME,DIST,REPNAME) both distance and representation are
 %   taken from the argument list
+
+%   This file is part of TimeBox. Copyright 2016 Rafael Giusti
+%   Revision 0.1.1
 tb.assert(nargin >= 1 && nargin <= 3, 'Function called with wrong number of arguments (should be 1, 2, or 3)');
 if nargin == 1
     % Called as CACHEPATH(DSNAME)

@@ -5,6 +5,9 @@ function dsnames = getnames
 %   Names are sorted case-insensitively. If two data sets have names that
 %   differ only by their cases (e.g., 'Dataset' and 'DataSet'), then the
 %   output order between them is unspecified.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 path = tb.getdspath;
 files = dir(path);
 

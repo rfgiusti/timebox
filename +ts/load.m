@@ -9,6 +9,9 @@ function [train, test] = load(dsname, repname)
 %
 %  [TRAIN,TEST] = LOAD(DS,...) load the training and the test partition of
 %  the DS data set.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if exist('repname', 'var') && ~isequal(lower(repname), 'time')
     path = [tb.getdspath dsname '/transforms/' dsname '-' repname '.mat'];
 else

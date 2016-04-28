@@ -15,6 +15,9 @@ function cachematrix(traintrain, testtrain, dsname, varargin) %#ok<INUSL>
 %   CACHEMATRIX(TRAINTRAIN,TESTTRAIN,DSNAME,DIST,REPNAME) uses the distance
 %   specified by DIST instead of the Euclidean distance and the decision
 %   space specified by REPNAME instead of the time domain.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 cachepath = dists.cachepath(dsname, varargin{:});
 [dirpath, ~] = fileparts(cachepath);
 if ~exist(dirpath, 'file')

@@ -30,6 +30,9 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %
 %   *"paa::num segments" defaults to 10 only if neither "paa::num segments"
 %   nor "paa::segment size" have been specified by the user.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;

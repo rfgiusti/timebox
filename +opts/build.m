@@ -10,6 +10,9 @@ function options = build(varargin)
 %       .
 %       .
 %       .
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 nargs = size(varargin, 2);
 i = 1;
 

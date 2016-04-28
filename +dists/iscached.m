@@ -14,6 +14,9 @@ function is = iscached(dsname, varargin)
 %
 %   ISCACHED(DSNAME,DIST,REPNAME) checks if the distance has been cached on
 %   the decision domains REPNAME for the distance DIST
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 cachepath = dists.cachepath(dsname, varargin{:});
 is = exist(cachepath, 'file') ~= 0;
 end

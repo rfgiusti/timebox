@@ -66,6 +66,9 @@ function [votes, weights, rankings] = atiya(dsname, trainclasses, testclasses, l
 %       dme::atiyapath          (default: --)
 %       dme::crossvalidation    (default: 0)
 %       dme::nnsize             (default: 5)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if ~exist('options', 'var')
     options = opts.empty;
 end

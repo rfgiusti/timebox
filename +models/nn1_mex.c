@@ -1,3 +1,10 @@
+/* Implements the 1-Nearest Neighbor with Euclidean distance.
+ */
+
+/* This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+ * Revision 1.0
+ */
+
 #include "mex.h"
 
 #include <math.h>

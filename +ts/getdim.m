@@ -20,6 +20,9 @@ function [dim, len] = getdim(dsname, representation)
 %
 %   Note: TimeBox is designed to work with time series of equal length.
 %         The length of the series is calculated from the training data.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if ~exist('representation', 'var')
     representation = 'time';
 end

@@ -6,6 +6,9 @@ function out = set(arg1, arg2, arg3)
 %
 %   OPTS.SET(opt, k, v) adds the option "k" with value "v" to the
 %   previously existing OPTS object "opt".
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if nargin == 3
     tb.assert(opts.isa(arg1), 'OPTS.SET: when called with three arguments, the first argument must be an OPTS object');
     out = arg1;

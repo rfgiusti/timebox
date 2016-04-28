@@ -1,3 +1,7 @@
+/* This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+ * Revision 1.0
+ */
+
 #include "mex.h"
 #include <stdlib.h>
 #include <string.h>

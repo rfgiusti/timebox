@@ -47,6 +47,9 @@ function [test_folds, train_folds] = makefolds(ds, nfolds, index)
 %           acc(i) = runs.partitioned(validation1train, validation1test);
 %       end
 %       mean(acc)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.2
 if ~exist('nfolds', 'var') || isempty(nfolds)
     nfolds = 10;
 end

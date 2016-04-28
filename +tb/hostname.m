@@ -9,6 +9,8 @@ function name = hostname()
 %   m j m a r i n j (at) y a h o o (dot) e s
 %   (c) MJMJ/2007
 %   MOD: MJMJ/2013
+
+%   Revision 0.1
 [ret, name] = system('hostname');   
 if ret ~= 0,
    if ispc

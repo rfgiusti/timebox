@@ -34,6 +34,10 @@ function [trainpaa, testpaa] = paa(train, test, options)
 %   For instance, attempting to segment a series of length 150 with
 %   subsequences of 80 observations will actually segment the series with
 %   subsequences of 75 observations.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
+
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;
