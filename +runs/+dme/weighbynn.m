@@ -32,6 +32,9 @@ function [votes, weights, rankings] = weighbynn(~, trainclasses, testclasses, la
 %       dme::limit      (default: 0)
 %       dme::nnsize     (default: 3)
 %       dme::normalize  (default: 0)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 numclassifiers = numel(distm);
 numinstances = numel(testclasses);
 

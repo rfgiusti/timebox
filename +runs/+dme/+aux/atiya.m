@@ -27,6 +27,9 @@ function weights = atiya(dsname, distname, repname, trainclasses, k, cachepath)
 %   When called in the form ATIYA(DSNAME,DISTNAME,REPNAME,C,k,PATH), this
 %   function will use PATH as the directory for caches, as specified by
 %   "dme::atiyapath" for RUNS.DME.ATIYA.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if exist('cachepath', 'var') && ~isempty(cachepath)
     cachefile = sprintf('%s/%s-%s-%s-%d.mat', cachepath, dsname, repname, distname, k);
 

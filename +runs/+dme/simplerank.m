@@ -70,6 +70,9 @@ function [votes, weights, rankings] = simplerank(dsname, trainclasses, testclass
 %       dme::mismatch penalty   (default: -2)
 %       dme::srankpath          (default: --)
 %       dme::trainindex         (default: --)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 numclasses = numel(labels);
 numclassifiers = numel(basecc);
 testsize = numel(testclasses);
