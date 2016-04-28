@@ -1,5 +1,6 @@
 % DTW function. W is half-window size in number of observations.
 function dist = dtw(t, r, W)
+%This function was deprecated in TimeBox 0.11.9
 N = length(t);
 M = length(r);
 

@@ -47,6 +47,9 @@ function [traintrain, testtrain] = calcmatrix(train, test, distfun, options)
 %
 %   If the "measure arg" option is present, its value is passed as a third
 %   argument to the distance function.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if ~exist('test', 'var')
     test = [];
 end
