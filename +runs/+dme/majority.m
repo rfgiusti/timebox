@@ -82,6 +82,9 @@ function [votes, weights, rankings] = majority(~, trainclasses, testclasses, ~, 
 %   The ensemble functions simply gather the votes, weights, and ranks for
 %   each instance. Use RUNS.DME.MERGE to get the actual ensemble
 %   classification.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 numclassifiers = numel(distm);
 numinstances = numel(testclasses);
 

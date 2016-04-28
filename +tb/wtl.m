@@ -4,6 +4,9 @@ function [wins, ties, losses] = wtl(x, y)
 %   [w,t,l] = WTL(X,Y) returns the number of wins, ties, and losses of the
 %   method X against the method Y. Each X and Y must be a cell array where
 %   each element is a single DOUBLE. X{i} wins over Y{i} if X{i}>Y{i}.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 merged = tb.mergecells(x,y);
 
 wins = 0;

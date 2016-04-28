@@ -11,6 +11,9 @@ function ver = version
 %   0.8.3  - Sep-09-2015
 %   0.7.2  - May-19-2015
 %   0.6.1  - Apr-27-2015
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 ver = struct;
 ver.major = 0;                               % major version: increase with "big" changes
 ver.minor = 11;                              % minor version: increase with bug fixes and "small" new functionalities

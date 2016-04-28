@@ -1,6 +1,9 @@
 function dspath = getdspath
 %TB.GETDSPATH Return the path where data sets should be looked for.
 %   Currently works only for *NIX systems.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if exist('~/.timebox.dspath', 'file')
     f = fopen('~/.timebox.dspath', 'r');
     tb.assert(f ~= -1, 'Can''t open "~/.timebox.dspath" for reading');

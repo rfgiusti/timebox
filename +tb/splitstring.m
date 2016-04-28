@@ -4,6 +4,9 @@ function parts = splitstring(string, delimiter)
 %   SPLITSTRING(S,D) returns the components of the string S when D is
 %   used as a single-character delimiter. The components are returned as
 %   a column cell of CHAR.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 tb.assert(length(delimiter) == 1, 'Delimiter should be one single character');
 
 occurences = strfind(string, delimiter);

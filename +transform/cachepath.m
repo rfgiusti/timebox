@@ -7,6 +7,9 @@ function [savepath, dirpath] = cachepath(dsname, repname)
 %
 %   [P,D] = CACHEPATH(DS,REPNAME) returns the full path to the cache in
 %   P and the directory in D.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 dspath = tb.getdspath;
 if ~exist('repname', 'var') || isequal(lower(repname), 'time')
     dirpath = [dspath dsname '/'];

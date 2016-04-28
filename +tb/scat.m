@@ -33,6 +33,9 @@ function scat(vdata, hdata, varargin)
 %       -writepdf       the following argument must be of type CHAR; the
 %                       plot will be saved as a PDF in the given path
 
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
+
 tb.assert(isequal(class(vdata), 'cell'), 'vdata must be of type CELL');
 tb.assert(isequal(class(hdata), 'cell'), 'hdata must be of type CELL');
 tb.assert(numel(vdata) == numel(hdata), 'vdata and hdata must have equal number of elements');

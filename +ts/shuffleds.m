@@ -7,6 +7,9 @@ function out = shuffleds(ds, options)
 %
 %   Options:
 %       shuffleds::indices      (default: 0)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 numseries = size(ds, 1);
 indices = randsample(numseries, numseries);
 if exist('options', 'var') && opts.get(options, 'shuffleds::indices', 0)

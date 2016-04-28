@@ -19,6 +19,9 @@ function [traintrain, testtrain] = cached(dsname, varargin)
 %   between the pairs of the time series in the training data set as well
 %   the the m-by-n matrix for the distance between each test time series
 %   and training time series.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1.1
 cachepath = dists.cachepath(dsname, varargin{:});
 tb.assert(exist(cachepath, 'file'), 'Cache %s does not exist', cachepath);
 data = load(cachepath);

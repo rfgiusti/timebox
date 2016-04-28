@@ -17,6 +17,9 @@ function [filepath, filedir] = getpath(dsname, representation)
 %   [f,d] = GETPATH(ds, rep) returns the path to the data set file in
 %   "f" and the directory where "f" is stored in "d". The last character
 %   of "d" is a slash ('/').
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if exist('representation', 'var') && ~isequal(representation, lower('time'))
     filepath = [tb.getdspath dsname '/transforms/' dsname '-' representation '.mat'];
     filedir = [tb.getdspath dsname '/transforms/'];

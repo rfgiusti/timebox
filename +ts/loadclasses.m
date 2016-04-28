@@ -5,8 +5,9 @@ function [trainclasses, testclasses] = loadclasses(dsname)
 %
 %   [X,Y] = LOADCLASSES(DS) also returns an m-by-1 column vector of double
 %   for the classes of the test instances.
-%
-%   If the classes are 
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 cachepath = [tb.getdspath dsname '/' dsname '.mat'];
 if numel(who('-file', cachepath, 'trainclasses', 'testclasses')) ~= 2
     filedata = load(cachepath, '-mat');

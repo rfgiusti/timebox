@@ -54,6 +54,9 @@ function [neighbor, distance, label, hit] = nn1dtw(stack, needle, windowlength_o
 % information
 %%%%%%%%%%%%%%%%
 
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
+
 serieslen = size(stack, 2) - 1;
 tb.assert(serieslen >= 5, ['Series of length 5 or longer are required for MODELS.NN1DTW. For short series, please' ...
     'use MODELS.NN with DISTS.DTW_Cpp']);

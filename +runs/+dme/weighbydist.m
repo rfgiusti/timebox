@@ -37,6 +37,9 @@ function [votes, weights, rankings] = weighbydist(dsname, trainclasses, testclas
 %
 %   For more information on how ensemble evaluation is implemented in
 %   TimeBox, please check RUNS.DME.MAJORITY.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 numclassifiers = numel(basecc);
 numinstances = numel(testclasses);
 

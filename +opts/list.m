@@ -1,6 +1,6 @@
 function x = list
-%OPTS.LIST Call HELP OPTS.LIST to see the list of valid options accepted by
-%TimeBox. This list is prone to being outdated and will be removed.
+%OPTS.LIST   This list is out-of-date and has been deprecated since
+%TimeBox 0.11.9
 %   Some functions in TimeBox accept options. Instead of using variadic
 %   arguments, though, TimeBox uses a containers.Map object. This approach
 %   is taken because this makes the options easier to save into a .MAT
@@ -84,6 +84,7 @@ function x = list
 %                           mechanism for classifiers that require the
 %                           model to be training is not implemented as of
 %                           yet
+warnobsolete('opts:list');
 x = 'Try calling "help OPTS.LIST" from the Matlab shell';
 end
 

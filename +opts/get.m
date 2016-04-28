@@ -7,6 +7,9 @@ function value = get(set, name, default)
 %
 %   OPTS.GET(options,K,default) does the same, but returns "default" if the
 %   key is not present in the OPTS object.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if ~exist('default', 'var')
     default = 0;
 end
