@@ -9,6 +9,8 @@ TimeBox 0.11.9: planned
 - Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
 - Deprecated behavior: specifying both "paa::num segments" and
   "paa::segment size" in TRANSFORM.PAA raises a warning.
+- Adds revision information to all functions in TimeBox. Revision
+  numbers for functions will follow Semantic Versioning (SemVer 2.0).
 
 
 TimeBox 0.11.8: released 2016-Apr-21

@@ -12,6 +12,9 @@ function [out, querypoints] = interp(ds, newlen, ~)
 %   by which the series should be grown or shrinked.
 %
 %   This function takes no options.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 nseries = size(ds, 1);
 len = size(ds, 2) - 1;
 

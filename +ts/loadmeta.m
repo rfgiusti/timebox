@@ -6,6 +6,9 @@ function meta = loadmeta(dsname, representation)
 %   the file does not exist, and exception is thrown.
 %
 %   LOADMETA(ds, rep) does the same, but for the transformed data set.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if ~exist('representation', 'var')
     representation = 'time';
 end
