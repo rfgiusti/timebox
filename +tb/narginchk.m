@@ -5,6 +5,9 @@ function narginchk(numargs, minargs, maxargs)
 %  arguments received by the caller does not fall in the interval [a,b].
 %  This function mimics the behavior of narginchk, which is not
 %  available in Matlab 2010
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if numargs < minargs || numargs > maxargs
     err = MException('TimeBox:assert', ['Function called with wrong number of arguments (should be ' ... 
             'between %d and %d)'], minargs, maxargs);

@@ -20,6 +20,9 @@ function data = loadfiles(files, mask)
 %
 %   data = LOADFILES([],mask) is syntax sugar for
 %   LOADFILES(TS.GETNAMES,mask).
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if isempty(files)
     tb.assert(exist('mask', 'var'), 'If file list is empty, then a mask must be supplied');
     files = ts.getnames;

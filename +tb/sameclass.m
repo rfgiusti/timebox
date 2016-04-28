@@ -8,6 +8,9 @@ function yes = sameclass(class1, class2, epsilonoroptions)
 %
 %   SAMECLASS(C1,C2,OPTS) where OPTS is an options object uses OPTS to read
 %   a "epsilon" options.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 DEFAULT_EPSILON = 1e-4;
 
 if exist('epsilonoroptions', 'var')

@@ -54,6 +54,9 @@ function sharpshoot(Xa, Ya, Xe, Ye, varargin)
 %                       not overwrite the PDF filedump
 %       -writepdf       the next argument must be of type CHAR; the plot
 %                       will be saved as a PDF in the given path 
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 tb.assert(isequal(class(Ya), 'cell'), 'Ya must be of type CELL');
 tb.assert(isequal(class(Xa), 'cell'), 'Xa must be of type CELL');
 tb.assert(isequal(class(Ye), 'cell'), 'Ye must be of type CELL');
