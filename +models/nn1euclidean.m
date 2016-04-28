@@ -25,7 +25,9 @@ function [neighbor, distance, label, hit] = nn1euclidean(stack, needle, options)
 %   Options:
 %       nn::tie break       (default: 'first')
 %       epsilon             (default: 1e-10)
-%
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if exist('options', 'var')
     tb.assert(opts.isa(options), 'Third argument must be non-existent or an OPTS object');
 else
