@@ -21,6 +21,9 @@ function [trainsax, testsax] = sax(train, test, options)
 %   paper: Jessica Lin, Eamonn Keogh,  Li Wei, and Stefano Leonardi.
 %   "Experiencing SAX: a novel symbolic representation of time series". In:
 %   Data Mining and Knowledge Discovery, Springer US, 2007, 15, 107-144.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.2
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;

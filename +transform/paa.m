@@ -22,6 +22,9 @@ function [trainpaa, testpaa] = paa(train, test, options)
 %   segments will be calculated with from the specified segment size,
 %   overriding assignments to "paa::num segments".
 
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.2
+
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;

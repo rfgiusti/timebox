@@ -18,6 +18,9 @@ function [trainacf, testacf] = acf(train, test, ~)
 %   zero.
 %
 %   This function does not take any options.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 trainacf = acfpart(train);
 if exist('test', 'var')
     testacf = acfpart(test);

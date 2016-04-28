@@ -34,6 +34,9 @@ function cache(train, test, dsname, repname, meta) %#ok<INUSL>
 %
 %   If the data has been previously cached, they are replaced with the
 %   new values.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 assert(~isequal(lower(repname), 'time'), 'Can not cache original data as transformed data.');
 [cachepath, dirpart] = transform.cachepath(dsname, repname);
 
