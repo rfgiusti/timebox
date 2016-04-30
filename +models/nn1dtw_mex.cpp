@@ -7,6 +7,10 @@
  * Please see THIRD-PARTY.txt for the UCR Suite license.
  */
 
+/* This file is part of TimeBox.
+ * Revision 1.0.0
+ */
+
 
 
 /***********************************************************************/
