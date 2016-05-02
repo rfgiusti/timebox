@@ -6,17 +6,21 @@ function sharpshoot(Xa, Ya, Xe, Ye, varargin)
 %   gain Xa/Ya versus the expected gain Xe/Ye. Each Xa, Ya, Xe, and Ye
 %   must be a cell array where each cell element is either a double or
 %   the  empty matrix []. The function TB.LOADFILES loads cell arrays in
-%   format suitable to be used by this function.
+%   a format suitable to be used by this function.
 %
 %   Each Xa{i} stands for the actual value of X on the i-th experiment
-%   or population. Eacg Xe{i} stands for the expected value of X on the
-%   i-th experiment or population. Similar logic applies to Ya and Ye.
+%   or population. Each Xe{i} stands for the expected value of X on the
+%   i-th experiment or population. Similar logic applies to Ya and Ye. All
+%   values are expected to be in the interval [0,1], and the concept of
+%   "gain" is defined as the ratio Xa{i}/Ya{i} or Xe{i}/Ye{i}. (NOTICE:
+%   this is the original concept of gain proposed by Batista et al., but it
+%   will be changed to Xa{i}-Ya{i} and Xe{i}-Ye{i} in the next release of
+%   TimeBox)
 %
 %   If the i-th row is the empty matrix [] for either Xa, Ya, Xe, or Ye,
-%   the corresponding rows is ignored for the remaining variables. The
-%   values are assumed to be in the interval [0,1].
+%   the corresponding row is ignored for the remaining variables.
 %
-%   The sharpshoot plot is introduced in the following paper: 
+%   The sharpshoot plot was introduced in the following paper: 
 %       Batista, GEAPA; Wang, X; and Keogh, EJ. "A Complexity-Invariant
 %       Measure for Time Series". Published in SIAM International
 %       Conference on Data Mining (2011).
@@ -34,7 +38,18 @@ function sharpshoot(Xa, Ya, Xe, Ye, varargin)
 %       % Sharpshoot the actual gain of the Manhattan distance over the
 %       % Euclidean distance against the expected gain with at most 5
 %       % data sets
-%       numdatasets = min(5, numel(ts.getnames));
+%       datasets = ts.getnames;
+%       numdatasets = min(5, numel(datasets));
+%       for i = 1:numdatasets
+%           [train, test] = ts.load(datasets{i});
+%           euc_exp{i} = runs.leaveoneout(train);
+%           euc_act{i} = runs.partitioned(train, test);
+%           man_exp{i} = runs.leaveoneout(train, @dists.manhattan);
+%           man_act{i} = runs.partitioned(train, test, @dists.manhattan);
+%       end
+%       tb.sharpshoot(man_act, euc_act, man_exp, euc_exp, ...
+%               'Actual Gain', 'Expected Gain');
+%       
 %       
 %   SHARPSHOOT(Xa,Ya,Xb,Yb,vlabel,hlabel) uses `vlabel' and `hlabel' as
 %   labels for the horizontal and vertical axes. Both values must be of
@@ -56,7 +71,7 @@ function sharpshoot(Xa, Ya, Xe, Ye, varargin)
 %                       will be saved as a PDF in the given path 
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 1.0
+%   Revision 1.0.1
 tb.assert(isequal(class(Ya), 'cell'), 'Ya must be of type CELL');
 tb.assert(isequal(class(Xa), 'cell'), 'Xa must be of type CELL');
 tb.assert(isequal(class(Ye), 'cell'), 'Ye must be of type CELL');
@@ -66,8 +81,8 @@ tb.assert(numel(Ye) == numel(Xa), 'Xa, Ya, Xe, and Ye must have equal number of 
 tb.assert(numel(Xe) == numel(Xa), 'Xa, Ya, Xe, and Ye must have equal number of elements');
 
 % Default options
-vlabel = 'Expected gain';
-hlabel = 'Actual gain';
+vlabel = 'Actual gain';
+hlabel = 'Expected gain';
 invisible = 0;
 nofigure = 0;
 nooverwrite = 0;
