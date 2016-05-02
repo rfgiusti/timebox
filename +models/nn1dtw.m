@@ -55,7 +55,7 @@ function [neighbor, distance, label, hit] = nn1dtw(stack, needle, windowlength_o
 %%%%%%%%%%%%%%%%
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 1.0
+%   Revision 1.0.1
 
 serieslen = size(stack, 2) - 1;
 tb.assert(serieslen >= 5, ['Series of length 5 or longer are required for MODELS.NN1DTW. For short series, please' ...
@@ -77,6 +77,10 @@ else
 end
 if isempty(window)
     window = round(0.10 * serieslen);
+else
+    tb.assert(window < serieslen, ['MODELS.NN1DTW requires the Sakoe-Chiba window to be shorter than the time ' ...
+        'series by at least one observation. For full-window DTW, please use MODELS.NN with DISTS.DTW_Cpp and ' ...
+        'set "dists::arg" to the length of the series']);
 end
 
 epsilon = opts.get(options, 'epsilon', 1e-10);
