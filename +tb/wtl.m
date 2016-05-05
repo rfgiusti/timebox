@@ -6,16 +6,17 @@ function [wins, ties, losses] = wtl(x, y)
 %   each element is a single DOUBLE. X{i} wins over Y{i} if X{i}>Y{i}.
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 0.1
+%   Revision 0.1.1
 merged = tb.mergecells(x,y);
 
 wins = 0;
 ties = 0;
 losses = 0;
 for i = 1:size(merged, 1)
-    if abs(x{i} - y{i}) < 1e-10
+    diff = merged{i, 1} - merged{i, 2};
+    if abs(diff) < eps
         ties = ties + 1;
-    elseif x{i} > y{i}
+    elseif diff > 0
         wins = wins + 1;
     else
         losses = losses + 1;

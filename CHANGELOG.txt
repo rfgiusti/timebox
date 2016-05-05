@@ -2,6 +2,7 @@ TimeBox Change Log
 ------------------
 
 TimeBox 0.11.9: planned
+- TB.WTL ignores rows where one of arguments contains missing data.
 - TRANSFORM.SAX no longer Z-normalizes the series.
 - Deprecated options: "sax::cut function".
 - Deprecated functions: TRANSFORM.SAX.BELL, TRANSFORM.SAX.UNIF,
