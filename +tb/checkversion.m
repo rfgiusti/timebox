@@ -1,30 +1,41 @@
 function checkversion(version)
-%TB.CHECKVERSION    Check if TimeBox is compatible with the specified
+%TB.CHECKVERSION   Check if TimeBox is compatible with the specified
 %version. Raises an exception if not.
-%   CHECKVERSION('1.0') will throw an exception if the current TimeBox
-%   version is older than '1.0'.
+%   CHECKVERSION('1.0.0') will throw an exception if the current TimeBox
+%   version is older than '1.0.0'.
 %
-%   CHECKVERSION(struct('major', 1, 'minor', 0)) is the same as the above.
+%   CHECKVERSION(struct('major', 1, 'minor', 0, 'patch', 0)) is the same as
+%   the above.
 %
 %   CHECKVERSION(TB.VERSION) will always run silently.
 %
-%   CHECKVERSION('1.0.5') is the same as CHECKVERSION('1.0'). The extra
-%   digit is treated as the release number, which is ignored.
+%   CHECKVERSION('1.0') treats the ommitted patch number as '.0'.
 %
 %   If the current version is not backwards-compatible with the expected
 %   version, an exception will be thrown.
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 1.0
+%   Revision 2.0
 if isequal(class(version), 'char')
-    specifiedversion = string2version(version);
+    [reqmajor, reqminor, reqpatch] = string2mmp(version);
 else
-    specifiedversion = version;
+    [reqmajor, reqminor, reqpatch] = struct2mmp(version);
+end
+[curmajor, curminor, curpatch] = struct2mmp(tb.version);
+
+if reqmajor == curmajor
+    if reqminor == curminor
+        diff = reqpatch - curpatch;
+    else
+        diff = reqminor - curminor;
+    end
+else
+    diff = reqmajor - curmajor;
 end
 
-if versioncmp(tb.version, specifiedversion) < 0
-    error('TimeBox:VersionError', ['Required TimeBox version ' version ' or later (currently running TimeBox ' ...
-        'version ' version2string(tb.version) ')']);
+if diff > 0
+    error('TimeBox:VersionError', 'Required TimeBox %d.%d.%d or newer (currently running TimeBox %d.%d.%d)', ...
+        reqmajor, reqminor, reqpatch, curmajor, curminor, curpatch);
 end
 
 % % If there is ever a backwards-compatibility break in TimeBox, uncomment
@@ -42,27 +53,40 @@ end
 end
 
 
-function vstruct = string2version(vstring)
-S = regexp(vstring, '^(\d+)\.(\d+)', 'tokens');
-tokens = S{1};
-if numel(tokens) ~= 2
-    error('tb:checkversion', ['Version string "' vstring '" is invalid']);
-end
-major = sscanf(tokens{1}, '%d');
-minor = sscanf(tokens{2}, '%d');
-vstruct = struct('major', major, 'minor', minor);
+function [major, minor, patch] = string2mmp(vstring)
+separator = min([strfind(vstring, '-'), strfind(vstring, '+')]);
+if ~isempty(separator)
+    % Meta tags such as 1.0.0-beta or 1.0.0+beta may be used, but they are
+    % currently ignored
+    vstring = vstring(1:separator-1);
 end
 
+% The only thing allowed in the version number are numbers and points
+assert(~isempty(regexp(vstring, '^[0-9.]+$', 'once')), 'Invalid version number: %s', vstring);
 
-function vstring = version2string(vstruct)
-vstring = sprintf('%d.%d', vstruct.major, vstruct.minor);
-end
-
-
-function d = versioncmp(a, b)
-if a.major == b.major
-    d = a.minor - b.minor;
+numpoints = numel(strfind(vstring, '.'));
+if numpoints == 1
+    version = sscanf(vstring, '%d.%d');
+    major = version(1);
+    minor = version(2);
+    patch = 0;
+elseif numpoints == 2
+    version = sscanf(vstring, '%d.%d.%d');
+    major = version(1);
+    minor = version(2);
+    patch = version(3);    
 else
-    d = a.major - b.major;
+    error('Invalid version number: %s', vstring);
+end
+end
+
+
+function [major, minor, patch] = struct2mmp(vstruct)
+major = vstruct.major;
+minor = vstruct.minor;
+if isfield(vstruct, 'patch')
+    patch = vstruct.patch;
+else
+    patch = 0;
 end
 end

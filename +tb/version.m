@@ -17,6 +17,7 @@ function ver = version
 ver = struct;
 ver.major = 0;                               % major version
 ver.minor = 11;                              % minor version
+ver.patch = 9;                               % patch version
 ver.release = 9;                             % release number: deprecated since v0.11.9
 ver.releasedatenum = datenum(2016, 04, 21);  % date number value for the date of the last stable release
 ver.special = 'alpha';                       % set flags for particular versions
