@@ -5,14 +5,41 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %   large time series databases", puslibhsed in "SIAM Data Mining
 %   Conference", 2005).
 %
+%   The BMP transformation passes a sliding window through a time series
+%   and transforms the implied subsequences into SAX words. The
+%   subsequences are Z-normalized. The SAX words are obtained with
+%   TRANSFORM.SAX.
+%
 %   DSBMP = BMP(DS) will transform the data set DS into time series
 %   bitmaps. The size of the resulting series will be determined by the
-%   bitmap level. For a bitmap of dimension n-by-n, the series weill be of
+%   bitmap level. For a bitmap of dimension n-by-n, the series will be of
 %   length 1-by-n^2, with each row of the bitmap concatenated in a single
 %   sequence.
 %
-%   DSBMP = BMP(DS,OPTS) does the same, but uses OPTS as an options object
-%   instead of default options.
+%   For instance, if this is the bitmap (at the second level) of some time
+%   series:
+%
+%         1 0 3 0
+%         1 1 0 1
+%         0 0 1 0
+%         2 1 0 1
+%
+%   Then this will be "flatened" into the following sequence:
+%
+%         1 0 3 0 1 1 0 1 0 0 1 0 2 1 0 1
+%
+%   In general, the following second level representation:
+%
+%         aa  ab  ba  bb
+%         ac  ad  bc  bd
+%         ca  cb  da  db
+%         cc  cd  dc  dd
+%
+%   Will be "flatened" into the following sequence:
+%
+%         aa  ab  ba  bb  ac  ad  bc  bd ca  cb  da  db cc  cd  dc  dd
+%
+%   DSBMP = BMP(DS,OPTS) does the same, but uses OPTS as an options object.
 %
 %   [TRAINBMP,TESTBMP] = BMP(TRAIN,TEST,...) simultaneously returns the
 %   time series bitmaps for both the training and test data set.
@@ -21,9 +48,11 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %       bmp::window width       (default: ceil(serieslength / 10))
 %       bmp::level              (default: 3)
 %       bmp::use paa            (default: 1)
-%       bmp::real bmp           (default: 0)
+%       bmp::real bmp           (DEPRECATED since TimeBox 0.11.9)
 %
-%   In addition, this function is aware of the related following options:
+%   In addition to the aformentioned options, this function is also aware
+%   of the following options associated with the SAX transformation.
+%
 %       sax::alphabet size      (default: 4)
 %       paa::num segments*      (default: 10)
 %       paa::segment size*      (no default value)
@@ -32,7 +61,7 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %   nor "paa::segment size" have been specified by the user.
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 0.1
+%   Revision 0.2.0
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;
@@ -47,6 +76,9 @@ serieslength = size(train, 2) - 1;
 windowwidth = opts.get(options, 'bmp::window width', ceil(serieslength / 10));
 level = opts.get(options, 'bmp::level', 3);
 usepaa = opts.get(options, 'bmp::use paa', 1);
+if opts.has(options, 'bmp::real bmp')
+    warning('transform:bmp', 'The option "bmp::real bmp" was not fully implemented and has been deprecated.');
+end
 isbmp = opts.get(options, 'bmp::real bmp', 0);
 
 % No matter what the SAX configuration is, we have our own default values
@@ -88,29 +120,15 @@ if exist('test', 'var')
     trainbmp = finalbmp(train, trainbmpdata, isbmp, level);
     testbmp = finalbmp(test, testbmpdata, isbmp, level);
 else
-        
     while windowright <= serieslength
         windowleft = windowleft + 1;
         windowright = windowright + 1;
         
-%         fprintf('\n\n\n\n------------------------\n\nIteration begins...\n\n');
-        
-%         train
-        
-%         windowleft
-%         windowright
-        
         % The spurious observations at train(:, windowleft) will be
         % considered to be the class labels by SAX and will be ignored
         trainsax = transform.sax(train(:, windowleft:windowright), options);
-        
-%         trainunderwindow = train(:, windowleft:windowright)
-%         trainsax
-        
         trainbmpdata = bmppart(trainbmpdata, trainsax, level);
     end
-    
-%     trainbmpdata
     
     trainbmp = finalbmp(train, trainbmpdata, isbmp, level);
 end
@@ -121,7 +139,6 @@ function out = finalbmp(in, inbmp, isbmp, level)
 % FINALBMP Normalize the observations in each bitmap and add classes
 
 norm = bsxfun(@rdivide, inbmp, max(inbmp, [], 2));
-
 
 if isbmp
     numseries = size(inbmp, 1);
@@ -138,6 +155,7 @@ end
 
 
 function bmp = makebmp(in, level)
+error('TimeBox:Unimplemented', 'TRANSFORM.BMP (MAKEBMP) is a stub');
 end
 
 
