@@ -112,7 +112,8 @@ if exist('test', 'var')
         % The spurious observations at train(:, windowleft) and
         % test(:, windowleft) will be considered to be the class labels by
         % SAX and will be ignored
-        [trainsax, testsax] = transform.sax(train(:, windowleft:windowright), test(:, windowleft:windowright), options);
+        [trainw, testw] = ts.znorm(train(:, windowleft:windowright), test(:, windowleft:windowright));
+        [trainsax, testsax] = transform.sax(trainw, testw, options);
         trainbmpdata = bmppart(trainbmpdata, trainsax, level);
         testbmpdata = bmppart(testbmpdata, testsax, level);
     end
@@ -126,7 +127,8 @@ else
         
         % The spurious observations at train(:, windowleft) will be
         % considered to be the class labels by SAX and will be ignored
-        trainsax = transform.sax(train(:, windowleft:windowright), options);
+        trainw = ts.znorm(train(:, windowleft:windowright));
+        trainsax = transform.sax(trainw, options);
         trainbmpdata = bmppart(trainbmpdata, trainsax, level);
     end
     
