@@ -27,7 +27,9 @@ function [trainpca, testpca] = pca(train, test, options)
 %       pca::zero cols      (default: 1)
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 0.1
+%   Revision 0.2.0
+warnobsolete('transform:pca');
+
 cut = 0.25;     % how much % of coefficients to keep?
 zerocols = 1;   % should we move columns to mean zero?
 
