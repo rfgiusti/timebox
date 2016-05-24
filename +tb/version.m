@@ -13,11 +13,12 @@ function ver = version
 %   0.6.1  - Apr-27-2015
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 1.0
+%   Revision 1.1
 ver = struct;
-ver.major = 0;                               % major version: increase with "big" changes
-ver.minor = 11;                              % minor version: increase with bug fixes and "small" new functionalities
-ver.release = 9;                             % release number: increase at every release
+ver.major = 0;                               % major version
+ver.minor = 11;                              % minor version
+ver.patch = 9;                               % patch version
+ver.release = 9;                             % release number: deprecated since v0.11.9
 ver.releasedatenum = datenum(2016, 04, 21);  % date number value for the date of the last stable release
 ver.special = 'alpha';                       % set flags for particular versions
 end

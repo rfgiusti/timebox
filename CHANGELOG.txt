@@ -9,7 +9,9 @@ TimeBox 0.11.9: planned
   DISTS.ABS_DTW, DISTS.DTW.
 - Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
 - Deprecated behavior: specifying both "paa::num segments" and
-  "paa::segment size" in TRANSFORM.PAA raises a warning.
+  "paa::segment size" in TRANSFORM.PAA raises a warning. The field
+  "release" returned by TB.VERSION is now deprecated and will be
+  removed in a future release.
 - Adds revision information to all functions in TimeBox. Revision
   numbers for functions will follow Semantic Versioning (SemVer 2.0).
 
