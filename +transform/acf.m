@@ -1,26 +1,20 @@
 function [trainacf, testacf] = acf(train, test, ~)
-%TRANSFORM.ACF Time series transform to autocorrelation coefficients.
-%   DSA = ACF(DS) transforms the time series data set DS into correlation
-%   coefficients.
+%TRANSFORM.ACF   Time series transform to sample autocorrelation
+%coefficients.
+%   DSA = ACF(DS) transforms the time series data set DS into sample
+%   correlation coefficients.
 %
 %   [TRAINA,TESTA] = ACF(TRAIN,TEST) converts both a training and a test
-%   data sets into correlation coefficients.
+%   data sets into sample correlation coefficients.
 %
-%   For each series, the first coefficient p(0) is the autocorrelation
-%   between each original observation and itself. The second coefficient
-%   p(1) is the autocorrelation between immediate pairs of observations,
-%   and so forth.
-%
-%   For an original series S and the resulting series Z, it holds that
-%   LEN(Z) == LEN(S) - 1
-%
-%   For zero-mean series, the first autocorrelation coefficient is always
-%   zero.
+%   For each output series, the first "observation" is the sample
+%   autocorrelation at lag 0 and is always 1, the second observation is the
+%   sample autocorrelation at lag 1, and so forth.
 %
 %   This function does not take any options.
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 0.1
+%   Revision 1.0.0
 trainacf = acfpart(train);
 if exist('test', 'var')
     testacf = acfpart(test);
@@ -42,7 +36,7 @@ for i = 1:nseries
     
     % Get statistics of this particular series
     cmean = mean(series);
-    cstd = std(series);
+    cvar = var(series);
     
     % Get a zero array with the number of coefficients
     acf = zeros(1, len);
@@ -61,7 +55,7 @@ for i = 1:nseries
     end 
 
     % Divide by the required factor
-    acf = acf / (cstd * (len - 1));
+    acf = acf / (cvar * (len - 1));
 
     % Put the factors in the output dataset
     out(i, 2:end) = acf;
