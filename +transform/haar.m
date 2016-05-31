@@ -20,7 +20,8 @@ function [trainwavelets, testwavelets] = haar(train, test, options)
 %       haar::extend        default 1
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 0.1
+%   Revision 0.2.0
+warnobsolete('transform:haar');
 
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
