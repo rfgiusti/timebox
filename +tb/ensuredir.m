@@ -5,6 +5,9 @@ function ensuredir(dirpath)
 %   ENSUREDIR(S) verifies if the directories in the tree of S exists and
 %   attempts to create each required parent directory so that the final
 %   path is valid. It assumes the path is absolute.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 tb.assert(~isempty(dirpath) && dirpath(1) ==    '/', 'Path must be absolute *NIX identifier (begins with /)');
 if ~exist(dirpath, 'file')
     dirparts = tb.splitstring(dirpath, '/');

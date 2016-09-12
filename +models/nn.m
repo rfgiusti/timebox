@@ -56,6 +56,9 @@ function [neighbor, distance, label, hit] = nn(stack, needle, varargin)
 %       % Run for a single instance of the data set using the dtw distance
 %       % with a Sakoe-Chiba window of width 12
 %       models.nn(train, test(1,:), @dists.dtw, opts.set('dists::arg', 12))
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 tb.narginchk(nargin, 2, 4);
 if nargin == 2
     distfun = @dists.euclidean;

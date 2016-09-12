@@ -96,6 +96,9 @@ function [ranking, points] = simplerank(dsname, repname, distname, trainclasses,
 %
 %   For more information on how ensemble evaluation is implemented in
 %   TimeBox, please check RUNS.DME.MAJORITY.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if ~exist('ranking_k', 'var') || isempty(ranking_k)
     ranking_k = 1;
 end

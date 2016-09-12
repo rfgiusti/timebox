@@ -18,6 +18,9 @@ function save(train, test, dsname) %#ok<INUSL>
 %
 %   If the particular data set does not contain test instances, the test
 %   set must be specified as an empty array, [].
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 dspath = tb.getdspath;
 savedir = [dspath dsname];
 savefile = [savedir '/' dsname '.mat'];

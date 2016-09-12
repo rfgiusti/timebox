@@ -5,6 +5,9 @@ function [outtrain, outtest] = znorm(intrain, intest)
 %  [NTRAIN,NTEST] = ZNORM(TRAIN,TEST) normalize both the training and test
 %  data sets.
 
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
+
 % Get the data without classes
 outtrain = znormpart(intrain);
 if exist('intest', 'var')

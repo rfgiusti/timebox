@@ -5,6 +5,9 @@ function [traind, testd] = dct(train, test, ~)
 %
 %   [TRAIND,TESTD] = DCT(TRAIN,TEST) returns the DCT transform of both the
 %   training and the test data sets.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 traind = dctpart(train);
 if exist('test', 'var')
     testd = dctpart(test);

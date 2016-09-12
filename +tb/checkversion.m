@@ -13,6 +13,9 @@ function checkversion(version)
 %
 %   If the current version is not backwards-compatible with the expected
 %   version, an exception will be thrown.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if isequal(class(version), 'char')
     specifiedversion = string2version(version);
 else

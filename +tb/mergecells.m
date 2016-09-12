@@ -23,6 +23,9 @@ function [merged, removed] = mergecells(varargin)
 %
 %   [M,R] = MERGECELLS(cell1,cell2,...) returns the merged rows in M and
 %   the removed rows in R.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.2
 numcolumns = 0;
 maxrows = size(varargin{1}, 1);
 for i = 1:numel(varargin)

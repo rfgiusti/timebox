@@ -5,7 +5,29 @@ TimeBox 0.12: planned
 - TRANSFORM.SAX no longer normalizes the input data.
 - TRANSFORM.SAX now works on the breakpoints instead of each PAA
   value. This makes the transformation much faster.
-- Minor bugfixes: number of arguments of MODELS.NN1DTW was incorrect.
+- Removed functions: TRANSFORM.SAX.BELL and TRANSFORM.SAX.UNIF.
+
+
+TimeBox 0.11.9: released 2016-May-31
+- TB.WTL ignores rows where one of the arguments contains missing data,
+  similarly to TB.MERGE.
+- MODELS.NN1DTW no longer accepts a Sakoe-Chiba window as large as the 
+  length of the series, due to the way envelopes are calculated within
+  the UCR Suite.
+- TRANSFORM.ACF has been fixed for time series with non-unitary
+  variance. 
+- TRANSFORM.SAX no longer Z-normalizes the series.
+- Deprecated options: "sax::cut function", "bmp::real bmp".
+- Deprecated functions: TRANSFORM.SAX.BELL, TRANSFORM.SAX.UNIF,
+  DISTS.ABS_DTW, DISTS.DTW, TRANSFORM.PCA, TRANSFORM.HAAR.
+- Minor bugfixes: fixes number of parameters of MODELS.NN1DTW and 
+  default axes labels of the sharpshoot plot.
+- Deprecated behavior: specifying both "paa::num segments" and 
+  "paa::segment size" in TRANSFORM.PAA raises a warning. The field
+  "release" returned by TB.VERSION is now deprecated and will be
+  removed in a future release.
+- Adds revision information to all functions in TimeBox. Revision
+  numbers for functions will follow Semantic Versioning (SemVer 2.0).
 
 
 TimeBox 0.11.8: released 2016-Apr-21

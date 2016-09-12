@@ -21,6 +21,9 @@ function savemeta(dsname, representation, meta)
 %       >> meta = ts.load('GunPoint', 'ps');
 %       >> meta.representation = 'Power Spectrum';
 %       >> ts.saemeta('GunPoint', 'ps', meta);
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 if exist('meta', 'var')
     tb.assert(isequal(class(representation), 'char'), ['When called with three arguments, the second must be of ' ...
         'class CHAR and it must be a valid representation name']);

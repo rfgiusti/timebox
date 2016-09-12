@@ -49,6 +49,9 @@ function [acc, indices, classes] = partitioned(train, test, varargin)
 %   requires input values to be of type DOUBLE, so if the input might
 %   contain complex numbers, either a distance function must be specified
 %   or the classification model must be explicitly specified.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 defaultmodel = @models.nn1euclidean;
 tb.narginchk(nargin, 2, 4);
 if nargin <= 2

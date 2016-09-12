@@ -26,6 +26,9 @@ function [acc, neighbors, classes] = dmnn(trainclasses, testclasses, distmatrix,
 %
 %   Options:
 %       dists::similarity       (default 0)
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 1.0
 if ~exist('options', 'var')
     options = opts.empty;
 end

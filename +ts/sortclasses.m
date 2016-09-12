@@ -12,6 +12,9 @@ function [sorted, index] = sortclasses(dataset)
 %   when NC is the number of classes in "ds". The first column of "idx"
 %   will be a class label, the second and the third columns will be indices
 %   to the fist and the last instances in "srt" which that class label.
+
+%   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
+%   Revision 0.1
 classes = dataset(:, 1);
 classvalues = unique(classes);
 
