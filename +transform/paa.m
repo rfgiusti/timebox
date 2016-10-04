@@ -1,7 +1,19 @@
 function [trainpaa, testpaa] = paa(train, test, options)
-%TRANSFORM.PAA Piecewise Aggregate Approximation of time series data set.
+%TRANSFORM.PAA   Piecewise Aggregate Approximation of time series data set.
 %   DSP = PAA(DS) returns the Piecewise Aggregate Approximation of the time
 %   series in DS.
+%
+%   The PAA transform of a time series is the averages of subsequences of
+%   the original time series. The nubmer of subsequences (or segments) to
+%   be used by this transformation is specified by the option
+%   "paa::num segments" (or, implicitly, by "paa::segment size").
+%
+%   This transformation attempts to segment the series into subsequences of
+%   equal length. If this is not possible, then some subsequences will be
+%   larger than others. For instance, if a series of length 150 is used
+%   with this function and a total of 4 segments is requested, then its PAA
+%   will be calculated on the subsequences (1-38), (39-75), (76-113), and
+%   (115,150), which have 38, 37, 38, and 37 observations respectivelly.
 %
 %   DSP = PAA(DS,OPTS) takes options from OPTS instead of using default
 %   values.
@@ -11,19 +23,20 @@ function [trainpaa, testpaa] = paa(train, test, options)
 %
 %   Options:
 %       paa::num segments       (default: 10)
-%       paa::segment size       (default: 0)
+%       paa::segment size       *see note below
 %
-%   It is possible to simultaneously specify "paa::num segments" and
-%   "paa::segment size". However, this is deprecated since version 0.11.9.
-%   In future versions, specifying both options will raise an error.
+%   The options "paa::segment size" and "paa::num segments" must not be
+%   used simultaneously.
 %
-%   The option "paa::segment size" takes precedence on "paa::num segments".
-%   If "paa::segment size" is different than zero, then the number of
-%   segments will be calculated with from the specified segment size,
-%   overriding assignments to "paa::num segments".
+%   *If the segment size specified by "paa::segment size" cannot divide the
+%   series into segments of approximately equal length, then it will be
+%   reduced to a size that can be used to retrieve more similar segments.
+%   For instance, attempting to segment a series of length 150 with
+%   subsequences of 80 observations will actually segment the series with
+%   subsequences of 75 observations.
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
-%   Revision 0.2
+%   Revision 1.0
 
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
@@ -33,27 +46,29 @@ if ~exist('options', 'var')
         options = opts.empty;
     end
 end
-if opts.has(options, 'paa::num segments') && opts.has(options, 'paa::segment size')
-    warning('transform:paa', 'Specifying both "paa::num segments" and "paa::segment size" is deprecated.');
-end
+assert(~(opts.has(options, 'paa::num segments') && opts.has(options, 'paa::segment size')), ['The options ' ...
+    '"paa::num segments" and "paa::segment size" may not be used simultaneously.']);
 numseg = opts.get(options, 'paa::num segments', 10);
-segsize = opts.get(options, 'paa::segment size', 0);
-if segsize
+segsize = opts.get(options, 'paa::segment size', []);
+if ~isempty(segsize)
+    tb.assert(segsize > 0 && round(segsize) == segsize, 'Segment size must be strictly positive integer');
     numseg = ceil((size(train, 2) - 1) / segsize);
 end
 
-trainpaa = paapart(train, numseg);
+len = size(train, 2) - 1;
+tb.assert(len >= numseg, 'Series of length %d is too short for %d PAA segments', len, numseg);
+tb.assert(numseg > 0 && round(numseg) == numseg, 'Number of segments must be strictly positive integer');
+
+trainpaa = paapart(train, numseg, len);
 if exist('test', 'var')
-    testpaa = paapart(test, numseg);
+    testpaa = paapart(test, numseg, len);
 end
 end
 
-function out = paapart(in, num_seg)
-numseries = size(in, 1);
-serieslength = size(in, 2) - 1;
 
+function out = paapart(in, num_seg, serieslength)
 % Create a matrix with the original classes and no observations
-out = zeros(numseries, 1 + num_seg);
+out = zeros(size(in, 1), 1 + num_seg);
 out(:, 1) = in(:, 1);
 
 % PAA it
