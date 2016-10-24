@@ -1,22 +1,28 @@
 function [trainbmp, testbmp] = bmp(train, test, options)
-%TRANSFORM.BITMAP Transform a data set into bit map representation.
-%   The time series Bitmap representation was proposed by Kumar et al
-%   ("Time-series bitmaps: a practical visualization tool for working with
-%   large time series databases", puslibhsed in "SIAM Data Mining
-%   Conference", 2005).
+%TRANSFORM.BITMAP   Transform a data set into time series bitmap
+%representation.
+%   B=BMP(D) transforms the time series in D into time series bitmaps. Each
+%   time series in D is a row vector with the instance class in the first
+%   column. 
 %
+%   B=BMP(D,O) where O is an OPTS object achieves the same result, but
+%   options are taken from O. See below the list of options accepted by
+%   this function.
+%
+%   [Bt,Bs]=BMP(Dt,Ds,...) transforms both the training set Dt into Bt and
+%   the training set Ds into Bs. A third argument containing an OPTS object
+%   is optional.
+%   
 %   The BMP transformation passes a sliding window through a time series
-%   and transforms the implied subsequences into SAX words. The
-%   subsequences are Z-normalized. The SAX words are obtained with
-%   TRANSFORM.SAX.
+%   and transforms the implied subsequences into SAX words. Each
+%   subsequence is normalized to mean value 0 and variance 1. The SAX words
+%   are obtained with TRANSFORM.SAX. Options that apply to TRANSFORM.SAX
+%   may be passed to that function if TRANSFORM.BMP receives an OPTS
+%   object.
 %
-%   DSBMP = BMP(DS) will transform the data set DS into time series
-%   bitmaps. The size of the resulting series will be determined by the
-%   bitmap level. For a bitmap of dimension n-by-n, the series will be of
-%   length 1-by-n^2, with each row of the bitmap concatenated in a single
-%   sequence.
-%
-%   For instance, if this is the bitmap (at the second level) of some time
+%   Each time series bitmap in B is returned as a row vector that
+%   represents the rows of the actual n-by-n time series bitmap. For
+%   instance, if this is the bitmap (at the second level) of some time
 %   series:
 %
 %         1 0 3 0
@@ -24,7 +30,8 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %         0 0 1 0
 %         2 1 0 1
 %
-%   Then this will be "flatened" into the following sequence:
+%   The bitmap returned by this function will be "flatened" and returned as
+%   the following sequence:
 %
 %         1 0 3 0 1 1 0 1 0 0 1 0 2 1 0 1
 %
@@ -41,8 +48,8 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %
 %   DSBMP = BMP(DS,OPTS) does the same, but uses OPTS as an options object.
 %
-%   [TRAINBMP,TESTBMP] = BMP(TRAIN,TEST,...) simultaneously returns the
-%   time series bitmaps for both the training and test data set.
+%   The options accepted by this function are as follows. If no option
+%   value is supplied, then the default value in parentheses is used.
 %
 %   Options:
 %       bmp::window width       (default: ceil(serieslength / 10))
@@ -59,6 +66,12 @@ function [trainbmp, testbmp] = bmp(train, test, options)
 %
 %   *"paa::num segments" defaults to 10 only if neither "paa::num segments"
 %   nor "paa::segment size" have been specified by the user.
+%
+%   Reference: Kumar et al., "Time-series bitmaps: a practical
+%   visualization tool for working with large time series databases",
+%   puslibhsed in "SIAM Data Mining Conference", 2005.
+%
+
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
 %   Revision 0.2.0

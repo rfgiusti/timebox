@@ -1,6 +1,6 @@
 function [train_ps, test_ps] = ps(train, test, ~)
-%TRANSFORM.PS Power spectrum of partitioned dataset
-%
+%TRANSFORM.PS Power spectrum of partitioned dataset. This function has been
+%deprecated in TimeBox 0.12.
 %   TRAIN_PS = ps(TRAIN) will convert the TRAIN dataset to the power
 %   spectrum representation.
 %
@@ -16,7 +16,9 @@ function [train_ps, test_ps] = ps(train, test, ~)
 %   This function takes no optional arguments.
 %
 %   This function has been deprecated since TimeBox 0.12 and will be
-%   removed in a future release.
+%   removed in a future release. Do not use this function. To find the
+%   amplitude/frequency spectrum, use TRANSFORM.FS. To find the powr
+%   spectral density, use TRANSFORM.PSD.
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
 %   Revision 0.2.0

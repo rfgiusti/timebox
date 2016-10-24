@@ -1,12 +1,14 @@
 function [train, test] = fs(train, test, ~)
-%TRANSFORM.FS   Two-side frequency/amplitude spectrum
+%TRANSFORM.FS   Two-side frequency/amplitude spectrum, not normalized, not
+%scaled.
 %   A=FS(D) returns the two-side frequency/amplitude spectrum of the time
-%   series in D.
+%   series in D. The output is such that size(A) equals size(D). The values
+%   of the amplitudes are not scaled.
 %
 %   [At,As]=FS(Dt,Ds) transforms both data sets Dt and Ds.
 %
 %   The two-side frequency spectrum of a time series X is given by
-%   ABS(FFT(X))
+%   F=ABS(FFT(X)). Note that F(i) is not scaled and has no associated unit.
 %
 %   Class values are expected in the first column of the dataset.
 %
