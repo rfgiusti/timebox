@@ -29,6 +29,11 @@ function d = mindist(S, Z, L)
 
 %   This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
 %   Revision 0.1.0
+if ~exist('L', 'var')
+    L = dists.mdlookup(4);
+elseif numel(L) == 1
+    L = dists.mdlookup(L);
+end
 
 % The look-up table is such that L(i,j) is the distance between the i-th
 % and the j-th letters. TimeBox transforms a series into SAX by using the
