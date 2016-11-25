@@ -1,6 +1,33 @@
 TimeBox Change Log
 ------------------
 
+TimeBox 0.12: released 2016-Nov-11
+- TRANSFORM.SAX no longer normalizes the input.
+- TRANSFORM.SAX is set to use a standard normal to convert PAA segments
+  into SAX letters. The option "sax::cut function" was removed and the
+  functions TRANSFORM.SAX.BELL and TRANSFORM.SAX.UNIF were removed as
+  well.
+- TRANSFORM.PAA no longer forces pieces to be extracted from integral
+  observations. The default behavior is to partially weigh observations
+  in accordance to the original proposal. It is possible to invoke the
+  previous behavior by setting "paa::constant" to 0.
+- TRANSFORM.PAA verifies if number of segments and segment length are
+  appropriate to the input series.
+- TRANSFORM.FS was introduced to find the frequency/amplitude spectrum
+  of the time series.
+- TRANSFORM.PSD calculates the power spectral density of the series.
+- Deprecated TRANSFORM.PS.
+- Introduced DITS.MINDIST and DISTS.MDLOOKUP to calculate the distance
+  between SAX words more closely to the paper design. DIST.MINDIST does
+  not require knowledge of the original length of the time series and,
+  therefore, is only proportional to the original MINDIST by a factor
+  that depends on the length of the series and of the sax word.
+- TRANSFORM.SAX has been redesigned to work much faster.
+- TRANSFORM.ACF is now a proxy to Matlab's AUTOCORR, which runs much
+  faster than the previous implementation.
+- Added WAVE files with simple sinusoidal waves in "./assets/".
+
+
 TimeBox 0.11.9: released 2016-May-31
 - TB.WTL ignores rows where one of the arguments contains missing data,
   similarly to TB.MERGE.
