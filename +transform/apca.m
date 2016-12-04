@@ -12,18 +12,18 @@ function [train_t, test_t] = apca(train, test, options)
 %   Currently this function only returns the values of the segments.
 %
 %   The APCA transform is found by initially segmenting the series into
-%   a set of ceil(N/2) segments, where N is the length of the time
-%   series. These segments are iterativelly merged by attempting to
+%   a set of floor(N/2) segments, where N is the length of the time
+%   series. These segments are iteratively merged by attempting to
 %   reduce the MSE until M segments remain. This process returns an
 %   approximately optimal segmentation of the series.
 %
 %   The number of segments M may be chosen by setting the option
 %   "apca::num segments" to the desired value.
 %
-%   APCA(DS,o) wher o is an OPTS object takes options from o.
+%   APCA(DS,o) where o is an OPTS object takes options from o.
 %
 %   [T,t]=APCA(DS,DSt,...) returns the transformed training set in T and
-%   the test training set in t.
+%   the test set in t.
 %
 %   Options:
 %       apca::num segments      (default: 10)
@@ -38,7 +38,7 @@ function [train_t, test_t] = apca(train, test, options)
 %   Revision 0.1.0
 
 %   Thanks to professor Keogh for sharing his APCA implementation which
-%   helped the in implementing and testing this function.
+%   helped in implementing and testing this function.
 if ~exist('options', 'var')
     if exist('test', 'var') && opts.isa(test)
         options = test;
@@ -48,7 +48,9 @@ if ~exist('options', 'var')
     end
 end
 
-M = opts.get(options, 'apca::num segments', 10);
+len = size(train, 2) - 1;
+M = opts.get(options, 'apca::num segments', min(floor(len / 2), 10));
+tb.assert(M <= floor(len / 2), 'TRANSFORM.APCA: cannot segment series of length %d into %d pieces', len, M);
 
 train_t = dods(train, M);
 if exist('test', 'var')
@@ -73,7 +75,7 @@ end
 function out = doseries(in, M)
 len = numel(in);
 
-% Make segments of size 2 (with the exception of the last, which may be 3)
+% Make segments of size 2 (with exception of the last segment)
 segstart = 1:2:len - 1;
 segend = segstart + 1;
 segend(end) = len;
