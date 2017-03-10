@@ -1,8 +1,11 @@
-/* Implements the 1-Nearest Neighbor with Euclidean distance.
+/* Implements the 1-Nearest Neighbor with many distance functions.
+ *
+ * A distance function is chosen by passing this MEX function an integer
+ * corresponding to the distance code.
  */
 
-/* This file is part of TimeBox. Copyright 2015-16 Rafael Giusti
- * Revision 1.0
+/* This file is part of TimeBox. Copyright 2015-17 Rafael Giusti
+ * Revision 0.1.0
  */
 
 #include "mex.h"
@@ -54,27 +57,11 @@ FILE *__debug_file = NULL;
 #define FLT_GT(_flt1, _flt2, _eps) \
 	(fabs((_flt1) - (_flt2)) > (_eps) && (_flt1) > (_flt2))
 
-double euclidean2(double *s1, double *s2, int len, double bsf, double epsilon)
-{
-	/* Return the squared Euclidean distance between two series
-	 */
-	double dist = 0;
-	while (--len) {
-		dist += (*s1 - *s2) * (*s1 - *s2);
-		s1++;
-		s2++;
-		/* Early abandon
-		 */
-		if (FLT_GT(dist, bsf, epsilon)) {
-			return dist;
-		}
-	}
-	return dist;
-}
+#include "nn1fast_distances.c"
 
-int nn1euclidean(double *stack, double *needle, int nseries, int len,
+int nn1fast(double *stack, double *needle, int nseries, int len,
 		int skipindex, double epsilon, double *bestidx,
-		double *distance)
+		distancefunction distfun, double *distance)
 {
 	double *test;
 	double bsf = INFINITY;
@@ -82,7 +69,7 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 	int current;
 	int neighbors = 0;
 
- 	debug("Called nn1euclidean(PTR, PTR, %d, %d, %d, %e, PTR, PTR)\n", 
+ 	debug("Called nn1fast(PTR, PTR, %d, %d, %d, %e, PTR, PTR, PTR)\n", 
 			nseries, len, skipindex, epsilon); 
 
 	/* Skip the needle class and point the test pointer to the first
@@ -103,7 +90,8 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 			continue;
 		}
 		
-		dist = euclidean2(test, needle, len, bsf, epsilon);
+		debug("Distance #%d: ", current);
+		dist = distfun(test, needle, len, bsf, epsilon);
 		if (FLT_GT(bsf, dist, epsilon)) {
 			/* Distance to nearest neighbor got smaller
 			*/
@@ -122,7 +110,7 @@ int nn1euclidean(double *stack, double *needle, int nseries, int len,
 		seekstack(test, stack, current, len);
 	}
 
-	*distance = sqrt(bsf);
+	*distance = bsf;
 	return neighbors;
 }
 
@@ -131,13 +119,14 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	/*
 	 *  Usage:
 	 *
-	 *     [bestidx, distance] = mexFunction(stack, needle, ...
+	 *     [bestidx, distance] = mexFunction(stack, needle, distcode, ...
 	 *                                       skipindex, epsilon);
 	 *
 	 *  Where the input arguments are:
 	 *
 	 *     stack     - the data set*
 	 *     needle    - the test instance
+	 *     distcode  - the ID distance function ID
 	 *     skipindex - if the test instance is contained in the data set,
 	 *                 skipindex must be the instance of the test instance;
 	 *                 otherwise it should be -1
@@ -156,26 +145,31 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	 *  Example usage:
 	 *
 	 *     [train, test] = ts.load('Sample dataset');
-	 *     [bestidx, distance] = mexFunction(stack', test(1,:), -1, 1e-10)
+	 *     needle = test(1, :);
+	 *     [bestidx, distance] = mexFunction(stack', needle, 3, -1, 1e-10)
 	 *
+	 *  This runs the 1-NN with Chebyshev distance (L_inf norm).
+	 * 
 	 *  The data set is transformed into the expected notation with stack'.
 	 *  The test instance should be kept a row vector.
 	 */
 
 	int nseries, len;
 	double *stack, *needle;
+	int distcode;
 	int skipindex;
 	double epsilon;
 	double *bestidx_large, *bestidx, distance;
 	int numneighbors;
+	distancefunction distfun;
 
 	start_debugger();
 	debug("Started mexFunction\n\n");
 	debug("Verifying input/output arguments\n");
 
-	if (nright != 4) {
-		debug("Got %d inputs (expected 4)\n", nright);
-		mexErrMsgTxt("Four inputs required.");
+	if (nright != 5) {
+		debug("Got %d inputs (expected 5)\n", nright);
+		mexErrMsgTxt("Five inputs required.");
 	}
 	if (nleft != 2) {
 		debug("Got %d outputs (expected 2)\n", nleft);
@@ -215,26 +209,40 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	*/
 	if (!mxIsDouble(right[2]) || mxIsComplex(right[2]) ||
 			mxGetNumberOfElements(right[2]) != 1) {
-		mexErrMsgTxt("Third input (SKIPINDEX) must ba non-complex "
+		mexErrMsgTxt("Third input (DISTCODE) must ba non-complex "
 				"scalar");
 	}
-	skipindex = mxGetScalar(right[2]);
-#if DEBUG
-	{
-		char *msg = (skipindex == -1 ? "in loco" : "in another set");
-		debug("skipindex == %d (test sample is %s\n", skipindex, msg);
-	}
-#endif
+	distcode = mxGetScalar(right[2]);
+	debug("distcode == %d\n", distcode);
 
 	/* Fourh argument must be a scalar
 	*/
 	if (!mxIsDouble(right[3]) || mxIsComplex(right[3]) ||
 			mxGetNumberOfElements(right[3]) != 1) {
-		mexErrMsgTxt("Fourth input (EPSILON) must be a non-complex "
+		mexErrMsgTxt("Fourth input (SKIPINDEX) must ba non-complex "
 				"scalar");
 	}
-	epsilon = mxGetScalar(right[3]);
+	skipindex = mxGetScalar(right[3]);
+#if DEBUG
+	{
+		char *msg = (skipindex == -1 ? "in another set" : "in loco");
+		debug("skipindex == %d (test sample is %s)\n", skipindex, msg);
+	}
+#endif
+
+	/* Fifth argument must be a scalar
+	*/
+	if (!mxIsDouble(right[4]) || mxIsComplex(right[4]) ||
+			mxGetNumberOfElements(right[4]) != 1) {
+		mexErrMsgTxt("Fitht input (EPSILON) must be a non-complex "
+				"scalar");
+	}
+	epsilon = mxGetScalar(right[4]);
 	debug("epsilon == %e\n", epsilon);
+
+	/* Select the distance function
+	 */
+	distfun = selectdistance(distcode);
 
 	/* Make room for the maximum possible number of neighbors (all of them)
 	*/
@@ -248,10 +256,17 @@ void mexFunction(int nleft, mxArray *left[], int nright, const mxArray *right[])
 	/* Run the classifier
 	*/
 	debug("Input ok\n\n");	
-	debug("Running 1-NN with euclidean distance\n");
+	debug("Running 1-NN with generic distance\n");
 
-	numneighbors = nn1euclidean(stack, needle, nseries, len, skipindex,
-			epsilon, bestidx_large, &distance);
+	numneighbors = nn1fast(stack, needle, nseries, len, skipindex,
+			epsilon, bestidx_large, distfun, &distance);
+
+	/* The 1-NN with Euclidean distance actually uses the Euclidean distance
+	 * squared; fixes that here.
+	 */
+	if (distcode == 1) {
+		distance = sqrt(distance);
+	}
 
 	/* Make the first argument the distances from the needle to all series
 	*/
