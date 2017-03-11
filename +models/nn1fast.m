@@ -12,6 +12,11 @@ function [neighbor, distance, label, hit] = nn1fast(stack, needle, options_or_di
 %   uses the Manhattan distance to find the neighborhood. See below for a
 %   list of support distance functions.
 %
+%   NN1FAST([],~,DISTNAME) returns the distance code of DISTNAME as the
+%   first output argument if DISTNAME is a supported distance. If DISTNAME
+%   is not supported, then the first output argument will be set to the
+%   empty array [].
+%
 %   NN1FAST(DS,S,options) does the same, but options are taken from
 %   "options", which must be a valid OPTS object as returned by OPTS.BUILD
 %   or OPTS.SET. If options are missing or no OPTS object is supplied,
@@ -36,7 +41,7 @@ function [neighbor, distance, label, hit] = nn1fast(stack, needle, options_or_di
 %   Chebyshev.
 
 %   This file is part of TimeBox. Copyright 2015-17 Rafael Giusti
-%   Revision 0.1.0
+%   Revision 0.2.0
 distname = 'euclidean';
 if exist('options_or_distname', 'var')
     if opts.isa(options_or_distname)
@@ -95,7 +100,15 @@ switch distname
     case 'hellinger'
         distcode = 51;
     otherwise
-        error(['Unsupported distance: ' distname]);
+        if ~isempty(stack)
+            error(['Unsupported distance: ' distname]);
+        end
+        distcode = [];
+end
+
+if isempty(stack)
+    neighbor = distcode;
+    return
 end
 
 tiebreak = opts.get(options, 'nn::tie break', 'first');
