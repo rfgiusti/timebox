@@ -11,18 +11,19 @@ function [trainpaa, testpaa] = paa(train, test, options)
 %   By default, the series will be segmented into pieces of equal size. If
 %   the required length does not match an integer number of observations,
 %   then some observations will be "split" into two and partially count for
-%   each observation. For instance, in order to segment a seires of three
-%   observations into three pieces, the first piece will take into
-%   consideration half the value of the second observation.
+%   each segment. For instance, in order to segment a series of three
+%   observations into two pieces, the first piece will take into
+%   consideration half the value of the second observation (and the
+%   "remaining" half will be accounted by the second piece).
 %
 %   If the option 'paa::constant' is set to 0 or false, then PAA will no
 %   longer  be restricted to pieces of equal length. In this case, it will
 %   find a segment length that is closest to matching an integer number of
 %   observation and retrieve as many segments of that length as possible.
-%   The remaining segments will have a different number of observations.
-%   For instance, if a series of length 150 is used with this function and
-%   a total of 4 segments is requested with no constant segment length,
-%   then its PAA will be calculated on the subsequences (1:38), (39:75),
+%   The remaining segments will have different numbers of observations. For
+%   instance, if a series of length 150 is used with this function and a
+%   total of 4 segments is requested with no constant segment length, then
+%   its PAA will be calculated on the subsequences (1:38), (39:75),
 %   (76:113), and (115:150), which have 38, 37, 38, and 37 observations
 %   respectivelly.
 %
