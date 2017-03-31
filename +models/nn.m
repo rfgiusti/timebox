@@ -139,6 +139,14 @@ for i = 1 : numinstances
     end
 end
 
+% The "best index" may be empty for some distance functions where the
+% distance from the test instance to the whole training series is Inf or
+% NaN. If that happens, then it is declared a tie among all instances
+if isempty(bestidx)
+    bestidx = 1:size(stack, 1);
+    bestidx(bestidx == skipindex) = [];
+end
+
 % If we got more than one nearest neighbor, we need to decide on one of
 % them, depending on the tie break strategy. Unless we are set to not
 % perform any tie break at all. In that case we just return what we got
