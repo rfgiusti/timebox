@@ -44,7 +44,7 @@ else
     skipindex = -1;
 end
 
-[bestidx, distance] = models.nn1_mex(stack', needle, skipindex, epsilon);
+[bestidx, distance] = models.nn1euclidean_mex(stack', needle, skipindex, epsilon);
 
 % If we got more than one nearest neighbor, we need to decide on one of
 % them, depending on the tie break strategy. Unless we are set to not
